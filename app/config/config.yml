@@ -68,5 +68,5 @@ swiftmailer:
 # Web Socket Configuration
 gos_web_socket:
   server:
-    port: "%ws_port%"
-    host: "%ws_host%"
+    port: "%websocket_port%"
+    host: "%websocket_host%"
