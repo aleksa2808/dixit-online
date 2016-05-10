@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new AppBundle\AppBundle(),
             new Gos\Bundle\WebSocketBundle\GosWebSocketBundle(),
             new Gos\Bundle\PubSubRouterBundle\GosPubSubRouterBundle(),
+            new Symfony\Bundle\AsseticBundle\AsseticBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
