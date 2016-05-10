@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="col-md-8">
+        <div class="panel panel-default" style="opacity:0.9" >
+            <!-- Default panel contents -->
+            <div class="panel-heading clearfix">
+                <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Results</h4>
+                <form class="pull-right form-inline">
+                    <a href="{{ path('lobby') }}" class="btn btn-primary btn-sm">Back to lobby</a>
+                </form>
+            </div>
+
+            <!-- Table -->
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Points left to finish</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Horatio</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Elliot</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>Sherlock</td>
+                    <td>4</td>
+                </tr>
+                <tr>
+                    <th scope="row">4</th>
+                    <td>NumbahFive</td>
+                    <td>6</td>
+                </tr>
+                <tr>
+                    <th scope="row">5</th>
+                    <td>Waldo</td>
+                    <td>12</td>
+                </tr>
+                <tr>
+                    <th scope="row">6</th>
+                    <td>DDrumpf</td>
+                    <td>14</td>
+                </tbody>
+            </table>
+        </div>
+    </div><!-- /.col-lg-6 -->
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading clearfix">
+                <h4 class="panel-title pull-left">Users in the room</h4>
+            </div>
+            <textarea class="form-control" placeholder="The match has started!" rows="10" readonly></textarea>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="chat with others">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button">Send</button>
+            </span>
+            </div><!-- /input-group -->
+        </div>
+    </div>
+{% endblock %}
+

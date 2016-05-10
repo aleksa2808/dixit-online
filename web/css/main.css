@@ -1,0 +1,33 @@
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background: #000 url(../img/back.jpg);
+}
+
+footer {
+    clear: both;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+.container-fluid {
+	color:#DEAB64;
+}
+
+.table {
+	opacity:0.55;
+}
+
+.table > .table-hover {
+	opacity:0.55;
+}
+
+.jumbotron {
+    background: red url(../img/dixit.jpg);
+}
+
+#myCanvas {
+    background-image: url('../img/vermillion.jpg');
+}

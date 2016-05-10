@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="col-md-8">
+        <div class="well" style="width:700px; height:600px">
+            <canvas id="myCanvas"></canvas>
+            <script src="{{ asset('js/game.js') }}"></script>
+        </div>
+    </div><!-- /.col-lg-6 -->
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading clearfix">
+                <h4 class="panel-title pull-left">Users in the room</h4>
+            </div>
+            <textarea class="form-control" placeholder="The match has started!" rows="15" readonly></textarea>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="chat with others">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button">Send</button>
+            </span>
+            </div><!-- /input-group -->
+        </div>
+        <a class="btn btn-danger" href="{{ path('results') }}" style="width:250px">Leave</a>
+    </div>
+{% endblock %}
+
