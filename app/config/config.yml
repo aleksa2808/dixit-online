@@ -70,6 +70,9 @@ gos_web_socket:
   server:
     port: "%websocket_port%"
     host: "%websocket_host%"
+    router:
+        resources:
+            - '@AppBundle/Resources/config/pubsub/routing.yml'
 
 # Assetic Configuration
 assetic:

@@ -4,24 +4,54 @@
     <div class="col-md-8">
         <div class="well" style="width:700px; height:600px">
             <canvas id="myCanvas"></canvas>
-            <script src="{{ asset('js/game.js') }}"></script>
         </div>
     </div><!-- /.col-lg-6 -->
     <div class="col-md-3">
         <div class="panel panel-default">
             <!-- Default panel contents -->
             <div class="panel-heading clearfix">
-                <h4 class="panel-title pull-left">Users in the room</h4>
+                <h4 class="panel-title pull-left">Chat</h4>
             </div>
-            <textarea class="form-control" placeholder="The match has started!" rows="15" readonly></textarea>
+            <textarea id="idChatTextArea" class="form-control" placeholder="The match has started!" rows="15" readonly></textarea>
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="chat with others">
+                <input id="idInput" type="text" class="form-control" placeholder="chat with others">
             <span class="input-group-btn">
-              <button class="btn btn-default" type="button">Send</button>
+              <button class="btn btn-default" type="button" onclick="fClick()">Send</button>
             </span>
             </div><!-- /input-group -->
         </div>
         <a class="btn btn-danger" href="{{ path('results') }}" style="width:250px">Leave</a>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('js/game.js') }}"></script>
+
+    <script>
+        var websocket = WS.connect("ws://{{ gos_web_socket_server_host }}:{{ gos_web_socket_server_port }}");
+        var ses = null;
+
+        websocket.on("socket/connect", function(session){
+            ses = session;
+
+            session.subscribe("acme/channel", function(uri, payload){
+                console.log("Received message", payload.msg);
+
+                document.getElementById("idChatTextArea").innerHTML += payload.msg.usr + ": " + payload.msg.msg + "\n";
+            });
+        });
+
+        websocket.on("socket/disconnect", function(error){
+            //error provides us with some insight into the disconnection: error.reason and error.code
+
+            console.log("Disconnected for " + error.reason + " with code " + error.code);
+        });
+
+        function fClick() {
+            if (null !== ses) ses.publish("acme/channel", {msg: document.getElementById("idInput").value});
+        }
+    </script>
 {% endblock %}
 
