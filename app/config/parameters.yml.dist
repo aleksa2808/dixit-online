@@ -15,7 +15,7 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
 
-    websocket_port:    ~
+    websocket_port:    1337
     websocket_host:    127.0.0.1
 
     # A secret key that's used to generate certain security-related tokens
