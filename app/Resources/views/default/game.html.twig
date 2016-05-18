@@ -26,6 +26,7 @@
 
 {% block javascripts %}
     {{ parent() }}
+    {{ ws_client() }}
 
     <script src="{{ asset('js/game.js') }}"></script>
 

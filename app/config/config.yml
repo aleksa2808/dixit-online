@@ -80,3 +80,11 @@ assetic:
     use_controller: '%kernel.debug%'
     filters:
         cssrewrite: ~
+
+# Redis Configuration
+snc_redis:
+  clients:
+    default:
+      type: predis
+      alias: default
+      dsn: '%redis_dsn%'
