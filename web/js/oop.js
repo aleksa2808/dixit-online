@@ -25,6 +25,7 @@
 	window.onresize = function () {
 		system.load();
 	};
+	
 /*--------------------------------------------------------- CANVAS CLASS ----------------------------------------------------------*/	
 	{
 	var Canvas = function ( ) {};
@@ -420,7 +421,9 @@
 	  system.load();
 	  }
 	  if (buttons.mouseOn(canvas, mousePos.x, mousePos.y)) {
-		if (cards.isSelected()) window.location="#openModal";
+		if (cards.isSelected()) {
+			$('#addDescriptionModal').modal('show');
+		}
 	  }
 	};
 	
