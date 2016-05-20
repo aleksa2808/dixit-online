@@ -11,3 +11,6 @@
 /bin/
 /composer.phar
 /.idea/
+nbproject/private/
+nbproject/project.properties
+nbproject/project.xml
