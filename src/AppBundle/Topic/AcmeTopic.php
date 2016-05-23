@@ -20,7 +20,8 @@ class AcmeTopic implements TopicInterface
     public function onSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => $connection->resourceId . " has joined " . $topic->getId()]);
+        $response = array('type'=>"message",'usr'=> $connection->resourceId, 'msg'=>"has joined the room (channel\"" . $topic->getId() . "\")");
+        $topic->broadcast(['msg' => $response]);
     }
 
     /**
@@ -34,7 +35,8 @@ class AcmeTopic implements TopicInterface
     public function onUnSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => $connection->resourceId . " has left " . $topic->getId()]);
+        $response = array('type'=>"message",'usr'=> $connection->resourceId, 'msg'=>"has left the room (channel\"" . $topic->getId() . "\")");
+        $topic->broadcast(['msg' => $response]);
     }
 
     /**

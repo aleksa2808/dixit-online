@@ -1,7 +1,10 @@
 acme_topic:
-    channel: acme/channel
+    channel: acme/{chname}
     handler:
         callback: 'acme.topic' #related to the getName() of your topic
+    requirements:
+        chname:
+          pattern: "\d+"
 
 acme_rpc:
     channel: sample/{method}
