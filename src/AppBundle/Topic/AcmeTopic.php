@@ -4,11 +4,22 @@ namespace AppBundle\Topic;
 
 use Gos\Bundle\WebSocketBundle\Topic\TopicInterface;
 use Ratchet\ConnectionInterface;
+use Gos\Bundle\WebSocketBundle\Client\ClientManipulatorInterface;
 use Ratchet\Wamp\Topic;
 use Gos\Bundle\WebSocketBundle\Router\WampRequest;
 
 class AcmeTopic implements TopicInterface
 {
+    protected $clientManipulator;
+
+    /**
+     * @param ClientManipulatorInterface $clientManipulator
+     */
+    public function __construct(ClientManipulatorInterface $clientManipulator)
+    {
+        $this->clientManipulator = $clientManipulator;
+    }
+
     /**
      * This will receive any Subscription requests for this topic.
      *
@@ -20,8 +31,8 @@ class AcmeTopic implements TopicInterface
     public function onSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         //this will broadcast the message to ALL subscribers of this topic.
-        $response = array('type'=>"message",'usr'=> $connection->resourceId, 'msg'=>"has joined the room (channel\"" . $topic->getId() . "\")");
-        $topic->broadcast(['msg' => $response]);
+        $topic->broadcast(['msg' => $connection->resourceId . " has joined " . $topic->getId()]);
+        $topic->broadcast(['msg' => $this->clientManipulator->getClient($connection) . " has joined " . $topic->getId()]);
     }
 
     /**
@@ -35,8 +46,7 @@ class AcmeTopic implements TopicInterface
     public function onUnSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         //this will broadcast the message to ALL subscribers of this topic.
-        $response = array('type'=>"message",'usr'=> $connection->resourceId, 'msg'=>"has left the room (channel\"" . $topic->getId() . "\")");
-        $topic->broadcast(['msg' => $response]);
+        $topic->broadcast(['msg'=> $connection->resourceId."has left the room (channel\"" . $topic->getId() . "\")"]);
     }
 
     /**
@@ -59,9 +69,7 @@ class AcmeTopic implements TopicInterface
                //shout something to all subs.
         */
         $response = array('type' => "message", 'usr' => $connection->resourceId, 'msg' => $event['msg']);
-        $topic->broadcast([
-            'msg' => $response
-        ]);
+        $topic->broadcast($response);
     }
 
     /**

@@ -24,6 +24,11 @@ footer {
 	opacity:0.55;
 }
 
+tr.selected td {
+    background: none repeat scroll 0 0 #FFCF8B;
+    color: #000000;
+}
+
 .jumbotron {
     background: red url(../img/dixit.jpg);
 }

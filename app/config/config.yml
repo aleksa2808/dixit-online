@@ -65,6 +65,13 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
+# Assetic Configuration
+assetic:
+    debug:          '%kernel.debug%'
+    use_controller: '%kernel.debug%'
+    filters:
+        cssrewrite: ~
+
 # Web Socket Configuration
 gos_web_socket:
   server:
@@ -73,13 +80,11 @@ gos_web_socket:
     router:
         resources:
             - '@AppBundle/Resources/config/pubsub/routing.yml'
-
-# Assetic Configuration
-assetic:
-    debug:          '%kernel.debug%'
-    use_controller: '%kernel.debug%'
-    filters:
-        cssrewrite: ~
+  client:
+    firewall: secured_area
+    session_handler: snc_redis.session.handler
+#    storage:
+#      driver: gos_web_socket.client_storage.driver.predis
 
 # Redis Configuration
 snc_redis:
@@ -92,5 +97,14 @@ snc_redis:
       type: predis
       alias: session
       dsn: '%redis_dsn%'
+#    ws_client:
+#      type: predis
+#      alias: client_storage.driver #snc_redis.client_storage.driver
+#      dsn: redis://localhost/2
+#      logging: '%kernel.debug%'
+#      options:
+#          profile: 2.2
+#          connection_timeout: 10
+#          read_write_timeout: 30
   session:
     client: session
