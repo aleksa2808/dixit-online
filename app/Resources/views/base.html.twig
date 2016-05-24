@@ -26,24 +26,31 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
+        {% block body_container %}
+            <div class="container">
+                <!--[if lt IE 8]>
+                    <p class="alert alert-warning">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+                <![endif]-->
 
-        <div class="container">
-            {% include('default/navbar.html.twig') %}
+                {% block navbar %}
+                    {% include('default/navbar.html.twig') %}
+                {% endblock %}
 
-            {% for flash_message in app.session.flashBag.get('notice') %}
-                <div class="alert alert-danger">
-                    {{ flash_message }}
-                </div>
-            {% endfor %}
+                {% for flash_message in app.session.flashBag.get('notice') %}
+                    <div class="alert alert-danger">
+                        {{ flash_message }}
+                    </div>
+                {% endfor %}
 
-            {% block body %}{% endblock %}
-            <footer>
-                <p>&copy; 2016 le kljub, Inc.</p>
-            </footer>
-        </div>
+                {% block body %}{% endblock %}
+
+                {% block footer %}
+                    <footer>
+                        <p>&copy; 2016 le kljub, Inc.</p>
+                    </footer>
+                {% endblock %}
+            </div>
+        {% block body_container %}
 
         {% block javascripts %}
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
