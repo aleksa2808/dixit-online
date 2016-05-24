@@ -5,7 +5,7 @@
         <div class="container">
             <h1 style="color:yellow; text-shadow: 2px 2px #ff0000;">Welcome!</h1>
             <p style="color:blue; text-shadow: 2px 2px yellow;">Step into the role of a mysterious storyteller as you slowly uncover the magical world of DiXit!</p>
-            <p><a class="btn btn-primary btn-lg" role="button" data-toggle="modal" data-target="#createGameModal">Create room &raquo;</a></p>
+            <p><a class="btn btn-primary btn-lg" role="button" data-toggle="modal" data-target="#createRoomModal">Create game &raquo;</a></p>
         </div>
     </div>
 
@@ -13,116 +13,178 @@
         <!-- Default panel contents -->
         <div class="panel-heading clearfix">
             <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Available games</h4>
-            <form class="pull-right form-inline">
-                <input type="text" class="form-control" placeholder="Filter games">
-                <a href="{{ path('lobby') }}" class="btn btn-primary btn-sm">Join game</a>
-            </form>
+            <div class="pull-right form-inline">
+                <button class="btn btn-default btn-sm" id="refreshRoomsButton">Refresh games</button>
+                <button class="btn btn-primary btn-sm" id="joinRoomButton" disabled>Join game</button>
+            </div>
         </div>
 
         <!-- Table -->
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Game Name</th>
-                <th>Owner</th>
-                <th>Slots</th>
-                <th>Has Password?</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>pedal to the metal</td>
-                <td>Otto</td>
-                <td>4/6</td>
-                <td>Yes</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>super secret match</td>
-                <td>dulehudini</td>
-                <td>6/6</td>
-                <td>No</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>Larry's groove</td>
-                <td>Larry</td>
-                <td>2/6</td>
-                <td>No</td>
-            </tr>
-            <tr>
-                <th scope="row">4</th>
-                <td>the game</td>
-                <td>otto242</td>
-                <td>4/6</td>
-                <td>No</td>
-            </tr>
-            <tr>
-                <th scope="row">5</th>
-                <td>Sue me</td>
-                <td>Mary</td>
-                <td>3/6</td>
-                <td>Yes</td>
-            </tr>
-            <tr>
-                <th scope="row">6</th>
-                <td>hello kitty island adventure</td>
-                <td>cartman</td>
-                <td>4/6</td>
-                <td>No</td>
-            </tr>
-            <tr>
-                <th scope="row">7</th>
-                <td>hamill4lyf</td>
-                <td>pera-detlic</td>
-                <td>1/6</td>
-                <td>No</td>
-            </tr>
-            <tr>
-                <th scope="row">8</th>
-                <td>dr.iggy</td>
-                <td>milan</td>
-                <td>3/6</td>
-                <td>Yes</td>
-            </tr>
-            <tr>
-                <th scope="row">9</th>
-                <td>dixitody</td>
-                <td>birdman</td>
-                <td>4/6</td>
-                <td>Yes</td>
-            </tr>
-            </tbody>
-        </table>
+        <table class="table table-hover" id="roomTable"></table>
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="createGameModal" tabindex="-1" role="dialog" aria-labelledby="createGameModalLabel">
+    <div class="modal fade" id="createRoomModal" tabindex="-1" role="dialog" aria-labelledby="createRoomModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="createGameModalLabel">Create a game</h4>
+                    <h4 class="modal-title" id="createRoomModalLabel">Create a game</h4>
                 </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="recipient-name" placeholder="game name">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="recipient-name" placeholder="number of players (4-6)">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" class="form-control" id="recipient-name" placeholder="password (optional)">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Create</button>
-                </div>
+                {% include(':default:form.html.twig') %}
             </div>
         </div>
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        var dynamicTable = (function() {
+
+            var _tableId, _table,
+                    _fields, _headers,
+                    _defaultText;
+
+            /** Builds the row with columns from the specified names.
+             *  If the item parameter is specified, the memebers of the names array will be used as property names of the item; otherwise they will be directly parsed as text.
+             */
+            function _buildRowColumns(names, item) {
+                var row = '<tr>';
+                if (names && names.length > 0)
+                {
+                    $.each(names, function(index, name) {
+                        var c = item ? item[name+''] : name;
+                        row += '<td>' + c + '</td>';
+                    });
+                }
+                row += '<tr>';
+                return row;
+            }
+
+            /** Builds and sets the headers of the table. */
+            function _setHeaders() {
+                // if no headers specified, we will use the fields as headers.
+                _headers = (_headers == null || _headers.length < 1) ? _fields : _headers;
+                var h = _buildRowColumns(_headers);
+                if (_table.children('thead').length < 1) _table.prepend('<thead></thead>');
+                _table.children('thead').html(h);
+            }
+
+            function _setNoItemsInfo() {
+                if (_table.length < 1) return; //not configured.
+                var colspan = _headers != null && _headers.length > 0 ?
+                'colspan="' + _headers.length + '"' : '';
+                var content = '<tr class="no-items"><td ' + colspan + ' style="text-align:center">' +
+                        _defaultText + '</td></tr>';
+                if (_table.children('tbody').length > 0)
+                    _table.children('tbody').html(content);
+                else _table.append('<tbody>' + content + '</tbody>');
+            }
+
+            function _removeNoItemsInfo() {
+                var c = _table.children('tbody').children('tr');
+                if (c.length == 1 && c.hasClass('no-items')) _table.children('tbody').empty();
+            }
+
+            return {
+                /** Configres the dynamic table. */
+                config: function(tableId, fields, headers, defaultText) {
+                    _tableId = tableId;
+                    _table = $('#' + tableId);
+                    _fields = fields || null;
+                    _headers = headers || null;
+                    _defaultText = defaultText || 'No items to list...';
+                    _setHeaders();
+                    _setNoItemsInfo();
+                    return this;
+                },
+                /** Loads the specified data to the table body. */
+                load: function(data, append) {
+                    if (_table.length < 1) return; //not configured.
+                    _setHeaders();
+                    _removeNoItemsInfo();
+                    if (data && data.length > 0) {
+                        var rows = '';
+                        $.each(data, function(index, item) {
+                            rows += _buildRowColumns(_fields, item);
+                        });
+                        var mthd = append ? 'append' : 'html';
+                        _table.children('tbody')[mthd](rows);
+                    }
+                    else {
+                        _setNoItemsInfo();
+                    }
+                    return this;
+                },
+                /** Clears the table body. */
+                clear: function() {
+                    _setNoItemsInfo();
+                    return this;
+                }
+            };
+        }());
+
+        function refreshRooms(dt) {
+            $.ajax({
+                // TODO: Implement better URL generation
+                url: "/get-rooms",
+                success: function(response) {
+                    dt.load(response);
+                }
+            });
+        }
+
+        $(document).ready(function(e) {
+
+            var dt = dynamicTable.config('roomTable',
+                    ['id', 'name', 'owner', 'hasPassword', 'members'],
+                    ['ID', 'Name', 'Owner', 'Has Password?', 'Members'],
+                    'There are no games at the moment.');
+
+            refreshRooms(dt);
+
+            $('#refreshRoomsButton').click(function(e) {
+                $('#joinRoomButton').prop('disabled', true);
+                refreshRooms(dt);
+            });
+
+
+            $('#roomTable').find('tbody').on('click', 'tr', function() {
+                $(this).addClass('selected').siblings().removeClass('selected');
+                $('#joinRoomButton').prop('disabled', false);
+            });
+
+            $('#joinRoomButton').on('click', function(e) {
+                var value = parseInt($("#roomTable").find('tr.selected').find('td:first').html());
+                window.location.href = "lobby/" + value;
+            });
+
+
+            $('form.ajax').submit(function(e) {
+                e.preventDefault();
+
+                var data = {};
+
+                $.each( $(this).serializeArray(), function(i, field) {
+                    data[field.name] = field.value;
+                });
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: data,
+                    success: function(response, status, xhr){
+                        var ct = xhr.getResponseHeader("content-type") || "";
+                        if (ct.indexOf('html') > -1) {
+                            $('#createRoomForm').html(response);
+                        } else {
+                            // TODO: Implement better URL generation
+                            window.location.href = "/lobby/" + response;
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+{%  endblock %}

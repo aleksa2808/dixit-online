@@ -32,6 +32,13 @@
 
         <div class="container">
             {% include('default/navbar.html.twig') %}
+
+            {% for flash_message in app.session.flashBag.get('notice') %}
+                <div class="alert alert-danger">
+                    {{ flash_message }}
+                </div>
+            {% endfor %}
+
             {% block body %}{% endblock %}
             <footer>
                 <p>&copy; 2016 le kljub, Inc.</p>
