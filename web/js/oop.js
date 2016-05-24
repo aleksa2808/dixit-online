@@ -27,6 +27,18 @@
 		system.load();
 	};
 	
+	$("#toggle1").click(function(){
+    $("#chat").animate({
+        height: 'toggle'
+    });
+	});  
+	
+	$("#toggle2").click(function(){
+		$("#chat2").animate({
+        height: 'toggle'
+		});
+	}); 
+	
 	
 	
 /*--------------------------------------------------------- CANVAS CLASS ----------------------------------------------------------*/	
