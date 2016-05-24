@@ -3,6 +3,7 @@
 	window.onload = function () {
 		
 		canvas.canvasID('myCanvas');
+		canvas.setDiv("myDiv");
 		canvas.setBgImage('img/lane.jpg');
 		
 		for (i=1; i<7; i++)
@@ -26,6 +27,8 @@
 		system.load();
 	};
 	
+	
+	
 /*--------------------------------------------------------- CANVAS CLASS ----------------------------------------------------------*/	
 	{
 	var Canvas = function ( ) {};
@@ -35,9 +38,15 @@
 		this.context = this.can.getContext('2d');
 	};
 	
+	Canvas.prototype.setDiv = function (div) {
+		this.div = document.getElementById(div);
+	};
+	
 	Canvas.prototype.size = function () {
-		this.can.width= 0.55*window.innerWidth;
-		this.can.height= 0.7*window.innerHeight;
+		//this.can.width= 0.55*window.innerWidth;
+		//this.can.height= 0.7*window.innerHeight;
+		this.can.width= this.div.clientWidth;
+		this.can.height= 0.65*this.can.width;
 		};
 	
 	Canvas.prototype.setBgImage = function (img) {
