@@ -40,6 +40,19 @@
 	}); 
 	
 	
+	$("#sresult").click(function(){
+		$("#results").removeClass('hidden');
+		$("#game").addClass('hidden');
+		
+	}); 
+	
+	$("#sgame").click(function(){
+		$("#game").removeClass('hidden');
+		$("#results").addClass('hidden');
+		
+	}); 
+	
+	
 	
 /*--------------------------------------------------------- CANVAS CLASS ----------------------------------------------------------*/	
 	{
