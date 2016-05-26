@@ -4,18 +4,18 @@
 		
 		canvas.canvasID('myCanvas');
 		canvas.setDiv("myDiv");
-		canvas.setBgImage('img/lane.jpg');
+		canvas.setBgImage('/img/lane.jpg');
 		
 		for (i=1; i<7; i++)
-		cards.setCard(i,"img/00"+i+".png");
+		cards.setCard(i,"/img/00"+i+".png");
 		
 		
 		players.setNum(4);
 		
-		players.setPlayer("Ana","img/avatar1.ico");
-		players.setPlayer("Tijana","img/avatar2.png");
-		players.setPlayer("Dusan","img/avatar3.png");
-		players.setPlayer("Aleksa","img/avatar4.png");
+		players.setPlayer("Ana","/img/avatar1.ico");
+		players.setPlayer("Tijana","/img/avatar2.png");
+		players.setPlayer("Dusan","/img/avatar3.png");
+		players.setPlayer("Aleksa","/img/avatar4.png");
 		
 		
 		system.load();
@@ -23,6 +23,9 @@
 		
 		
 	};
+	
+	
+	
 	window.onresize = function () {
 		system.load();
 	};
@@ -38,12 +41,21 @@
 	$("#sresult").click(function(){
 		$("#results").removeClass('hidden');
 		$("#game").addClass('hidden');
+		$("#lobby").addClass('hidden');
 		
 	}); 
 	
 	$("#sgame").click(function(){
 		$("#game").removeClass('hidden');
 		$("#results").addClass('hidden');
+		$("#lobby").addClass('hidden');
+		
+	}); 
+	
+	$("#slobby").click(function(){
+		$("#lobby").removeClass('hidden');
+		$("#results").addClass('hidden');
+		$("#game").addClass('hidden');
 		
 	}); 
 	
@@ -159,7 +171,7 @@
 		this.card [5] = new Card();
 		
 		this.back = new Image();
-		this.back.src = "img/back.png";
+		this.back.src = "/img/back.png";
 		
 		this.selected = 6;
 		this.submitted = false;
@@ -348,7 +360,7 @@
 	
 	var Buttons = function () {
 		this.submit = new Image();
-		this.submit.src = "img/submit.png";
+		this.submit.src = "/img/submit.png";
 		
 	}; 
 	
@@ -356,8 +368,8 @@
 	Buttons.prototype.loadButtons = function (canvas) {
 		this.submitX = 0.85*canvas.can.width;
 		this.submitY = 0.85*canvas.can.height;
-		if (cards.isSelected()) this.submit.src = "img/submit_t.png";
-		else this.submit.src = "img/submit.png";
+		if (cards.isSelected()) this.submit.src = "/img/submit_t.png";
+		else this.submit.src = "/img/submit.png";
 		canvas.context.drawImage(this.submit,this.submitX, this.submitY, (this.submit.width/(5)), (this.submit.height/(5)));
 	};
 	
