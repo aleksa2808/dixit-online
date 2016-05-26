@@ -33,11 +33,6 @@
     });
 	});  
 	
-	$("#toggle2").click(function(){
-		$("#chat2").animate({
-        height: 'toggle'
-		});
-	}); 
 	
 	
 	$("#sresult").click(function(){
