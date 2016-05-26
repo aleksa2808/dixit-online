@@ -3,6 +3,7 @@ services:
         class: AppBundle\Topic\AcmeTopic
         arguments:
             - '@gos_web_socket.websocket.client_manipulator'
+            - '@snc_redis.default'
         tags:
             - { name: gos_web_socket.topic }
 

@@ -3,6 +3,7 @@
 namespace AppBundle\Topic;
 
 use Gos\Bundle\WebSocketBundle\Topic\TopicInterface;
+use Predis\ClientInterface;
 use Ratchet\ConnectionInterface;
 use Gos\Bundle\WebSocketBundle\Client\ClientManipulatorInterface;
 use Ratchet\Wamp\Topic;
@@ -11,13 +12,16 @@ use Gos\Bundle\WebSocketBundle\Router\WampRequest;
 class AcmeTopic implements TopicInterface
 {
     protected $clientManipulator;
+    protected $redisClient;
 
     /**
      * @param ClientManipulatorInterface $clientManipulator
+     * @param ClientInterface $redis
      */
-    public function __construct(ClientManipulatorInterface $clientManipulator)
+    public function __construct(ClientManipulatorInterface $clientManipulator, ClientInterface $redis)
     {
         $this->clientManipulator = $clientManipulator;
+        $this->redisClient = $redis;
     }
 
     /**
@@ -31,7 +35,8 @@ class AcmeTopic implements TopicInterface
     public function onSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => $connection->resourceId . " has joined " . $topic->getId()]);
+
+        $topic->broadcast(['msg' => $connection->Session->get('name') . " has joined " . $this->redisClient->hget('room:'.$request->getAttributes()->get('room'), 'name')]); //$topic->getId()]);
         $topic->broadcast(['msg' => $this->clientManipulator->getClient($connection) . " has joined " . $topic->getId()]);
     }
 
@@ -68,7 +73,9 @@ class AcmeTopic implements TopicInterface
             if ($topic->getId() == "acme/channel/shout")
                //shout something to all subs.
         */
-        $response = array('type' => "message", 'usr' => $connection->resourceId, 'msg' => $event['msg']);
+
+        echo "\n\n"." ".$connection->Session->getId();
+        $response = array('type' => "message", 'usr' => $connection->Session->getId(), 'msg' => $event['msg']);
         $topic->broadcast($response);
     }
 

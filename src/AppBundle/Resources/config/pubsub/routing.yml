@@ -4,7 +4,7 @@ acme_topic:
         callback: 'acme.topic' #related to the getName() of your topic
     requirements:
         room:
-            path: '\d+'
+            pattern: '\d+'
 
 acme_rpc:
     channel: sample/{method}
@@ -12,4 +12,4 @@ acme_rpc:
         callback: 'acme.rpc' #related to the getName() or your RPC service
     requirements:
         method:
-            path: '[a-z_]+'
+            pattern: '[a-z_]+'

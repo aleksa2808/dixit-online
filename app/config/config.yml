@@ -81,7 +81,7 @@ gos_web_socket:
         resources:
             - '@AppBundle/Resources/config/pubsub/routing.yml'
   client:
-    firewall: secured_area
+    firewall: main
     session_handler: snc_redis.session.handler
 #    storage:
 #      driver: gos_web_socket.client_storage.driver.predis
