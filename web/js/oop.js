@@ -49,6 +49,23 @@
 		$("#game").removeClass('hidden');
 		$("#results").addClass('hidden');
 		$("#lobby").addClass('hidden');
+		canvas.canvasID('myCanvas');
+		canvas.setDiv("can");
+		canvas.setBgImage('/img/lane.jpg');
+		
+		for (i=1; i<7; i++)
+		cards.setCard(i,"/img/00"+i+".png");
+		
+		
+		players.setNum(4);
+		
+		players.setPlayer("Ana","/img/avatar1.ico");
+		players.setPlayer("Tijana","/img/avatar2.png");
+		players.setPlayer("Dusan","/img/avatar3.png");
+		players.setPlayer("Aleksa","/img/avatar4.png");
+		
+		
+		system.load();
 		
 	}); 
 	
