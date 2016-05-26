@@ -16,7 +16,7 @@ parameters:
     mailer_password:   ~
 
     websocket_port:    1337
-    websocket_host:    127.0.0.1
+    websocket_host:    localhost
 
     redis_dsn:         redis://localhost
 
