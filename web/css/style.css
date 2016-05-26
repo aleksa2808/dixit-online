@@ -28,3 +28,20 @@
     margin-bottom: -999999px;
     padding-bottom: 999999px;
 }
+
+#chat {
+	display:none;
+	width:250px;
+	height:toggle;
+}
+
+#chat2 {
+	display:none;
+	width:250px;
+	height:toggle;
+}
+
+.btn-responsive {
+    white-space: normal !important;
+    word-wrap: break-word;
+}

@@ -3,19 +3,19 @@
 	window.onload = function () {
 		
 		canvas.canvasID('myCanvas');
-		canvas.setDiv("myDiv");
-		canvas.setBgImage('img/lane.jpg');
+		canvas.setDiv("can");
+		canvas.setBgImage('/img/lane.jpg');
 		
 		for (i=1; i<7; i++)
-		cards.setCard(i,"img/00"+i+".png");
+		cards.setCard(i,"/img/00"+i+".png");
 		
 		
 		players.setNum(4);
 		
-		players.setPlayer("Ana","img/avatar1.ico");
-		players.setPlayer("Tijana","img/avatar2.png");
-		players.setPlayer("Dusan","img/avatar3.png");
-		players.setPlayer("Aleksa","img/avatar4.png");
+		players.setPlayer("Ana","/img/avatar1.ico");
+		players.setPlayer("Tijana","/img/avatar2.png");
+		players.setPlayer("Dusan","/img/avatar3.png");
+		players.setPlayer("Aleksa","/img/avatar4.png");
 		
 		
 		system.load();
@@ -23,9 +23,58 @@
 		
 		
 	};
+	
+	
+	
 	window.onresize = function () {
 		system.load();
 	};
+	
+	$("#toggle1").click(function(){
+    $("#chat").animate({
+        height: 'toggle'
+    });
+	});  
+	
+	
+	
+	$("#sresult").click(function(){
+		$("#results").removeClass('hidden');
+		$("#game").addClass('hidden');
+		$("#lobby").addClass('hidden');
+		
+	}); 
+	
+	$("#sgame").click(function(){
+		$("#game").removeClass('hidden');
+		$("#results").addClass('hidden');
+		$("#lobby").addClass('hidden');
+		canvas.canvasID('myCanvas');
+		canvas.setDiv("can");
+		canvas.setBgImage('/img/lane.jpg');
+		
+		for (i=1; i<7; i++)
+		cards.setCard(i,"/img/00"+i+".png");
+		
+		
+		players.setNum(4);
+		
+		players.setPlayer("Ana","/img/avatar1.ico");
+		players.setPlayer("Tijana","/img/avatar2.png");
+		players.setPlayer("Dusan","/img/avatar3.png");
+		players.setPlayer("Aleksa","/img/avatar4.png");
+		
+		
+		system.load();
+		
+	}); 
+	
+	$("#slobby").click(function(){
+		$("#lobby").removeClass('hidden');
+		$("#results").addClass('hidden');
+		$("#game").addClass('hidden');
+		
+	}); 
 	
 	
 	
@@ -43,10 +92,8 @@
 	};
 	
 	Canvas.prototype.size = function () {
-		//this.can.width= 0.55*window.innerWidth;
-		//this.can.height= 0.7*window.innerHeight;
 		this.can.width= this.div.clientWidth;
-		this.can.height= 0.65*this.can.width;
+		this.can.height= 0.65*this.div.clientWidth;
 		};
 	
 	Canvas.prototype.setBgImage = function (img) {
@@ -88,16 +135,15 @@
 	
 	Card.prototype.draw = function (canvas) {
 		if (this.selected) this.drawRectangle(canvas,3);
-		canvas.context.drawImage(this.card,this.x ,this.y ,(this.card.width/(5.5))*rw,(this.card.height/(5.5))*rh);
+		canvas.context.drawImage(this.card,this.x ,this.y ,(this.card.width/(5.5)),(this.card.height/(5.5)));
 	} ;
 	
 	Card.prototype.zoom = function (canvas) {
 		if (this.selected) this.drawRectangle(canvas,2);
-		canvas.context.drawImage(this.card,this.x, (this.y-this.card.height/(9.5)) , (this.card.width/(3.5))*rw, (this.card.height/(3.5))*rh);
+		canvas.context.drawImage(this.card,this.x, (this.y-this.card.height/(9.5)) , (this.card.width/(3.5)), (this.card.height/(3.5)));
 	};
 	
 	Card.prototype.mouseOn = function (canvas, mx, my) {
-		//var s = scale();
 		if( mx >= this.x
 		&& mx < (this.x+this.card.width/(5.5))
 		&& my >= this.y
@@ -112,9 +158,9 @@
 		canvas.context.lineWidth = "8";
 		canvas.context.strokeStyle = "green";
 		if (scale==3)
-		canvas.context.rect(this.x, this.y, (this.card.width/(5.5))*rw, (this.card.height/(5.5))*rh);
+		canvas.context.rect(this.x, this.y, (this.card.width/(5.5)), (this.card.height/(5.5)));
 		else 
-		canvas.context.rect(this.x, (this.y-this.card.height/(9.5)), (this.card.width/(3.5))*rw, (this.card.height/(3.5))*rh);
+		canvas.context.rect(this.x, (this.y-this.card.height/(9.5)), (this.card.width/(3.5)), (this.card.height/(3.5)));
 		canvas.context.stroke();
 	};	
 	
@@ -142,7 +188,7 @@
 		this.card [5] = new Card();
 		
 		this.back = new Image();
-		this.back.src = "img/back.png";
+		this.back.src = "/img/back.png";
 		
 		this.selected = 6;
 		this.submitted = false;
@@ -265,9 +311,9 @@
 		else canvas.context.fillStyle = "red";
 		if (this.voted) canvas.context.fillStyle = "green";
 		canvas.context.font = nameStyle[0];
-		canvas.context.fillText(this.name, (this.x)*rw, (this.y+this.y*2.4)*rh);
+		canvas.context.fillText(this.name, (this.x), (this.y+this.y*2.4));
 		canvas.context.font = nameStyle[1];
-		canvas.context.fillText (""+this.points+" points", (this.x)*rw, (this.y+this.y*2.8)*rh);
+		canvas.context.fillText (""+this.points+" points", (this.x), (this.y+this.y*2.8));
 	}
 	}
 /*-------------------------------------------------------------------------------------------------------------------*/	
@@ -308,7 +354,6 @@
 	}
 	
 	Players.prototype.drawPlayers = function(canvas) {
-		//var w=this.startW, h=this.startH;
 		this.startW = 0.12*canvas.can.width;
 		this.startH = 0.06*canvas.can.height;
 		this.endW = 0.88*canvas.can.width;
@@ -332,7 +377,7 @@
 	
 	var Buttons = function () {
 		this.submit = new Image();
-		this.submit.src = "img/submit.png";
+		this.submit.src = "/img/submit.png";
 		
 	}; 
 	
@@ -340,9 +385,9 @@
 	Buttons.prototype.loadButtons = function (canvas) {
 		this.submitX = 0.85*canvas.can.width;
 		this.submitY = 0.85*canvas.can.height;
-		if (cards.isSelected()) this.submit.src = "img/submit_t.png";
-		else this.submit.src = "img/submit.png";
-		canvas.context.drawImage(this.submit,this.submitX, this.submitY, (this.submit.width/(5))*rw, (this.submit.height/(5))*rh);
+		if (cards.isSelected()) this.submit.src = "/img/submit_t.png";
+		else this.submit.src = "/img/submit.png";
+		canvas.context.drawImage(this.submit,this.submitX, this.submitY, (this.submit.width/(5)), (this.submit.height/(5)));
 	};
 	
 	Buttons.prototype.mouseOn = function (canvas,mx, my) {
@@ -360,7 +405,7 @@
 	var System = function () {};
 	
 	System.prototype.getMousePos = function (evt) {
-      var rect = canvas.can.getBoundingClientRect();
+      var rect = canvas.div.getBoundingClientRect();
       return {
         x: evt.clientX - rect.left,
         y: evt.clientY - rect.top
@@ -376,19 +421,6 @@
 	  buttons.loadButtons(canvas);
 	  
 	  events.setEventListener();
-	  
-	  originalW =window.innerWidth;
-      originalH =window.innerHeight;
-		
-		
-	  newW =window.innerWidth;
-      newH =window.innerHeight;
-		
-	  rw = newW/originalW;
-	  rh = newH/originalH;
-	  
-	  //originalW = newW;
-	  //originalH = newH;
 	  };
 	  
 	}
