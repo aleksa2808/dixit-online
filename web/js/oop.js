@@ -3,7 +3,7 @@
 	window.onload = function () {
 		
 		canvas.canvasID('myCanvas');
-		canvas.setDiv("myDiv");
+		canvas.setDiv("can");
 		canvas.setBgImage('/img/lane.jpg');
 		
 		for (i=1; i<7; i++)
