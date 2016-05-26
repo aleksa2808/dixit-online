@@ -68,10 +68,8 @@
 	};
 	
 	Canvas.prototype.size = function () {
-		//this.can.width= 0.55*window.innerWidth;
-		//this.can.height= 0.7*window.innerHeight;
 		this.can.width= this.div.clientWidth;
-		this.can.height= 0.65*this.can.width;
+		this.can.height= 0.65*this.div.clientWidth;
 		};
 	
 	Canvas.prototype.setBgImage = function (img) {
@@ -113,16 +111,15 @@
 	
 	Card.prototype.draw = function (canvas) {
 		if (this.selected) this.drawRectangle(canvas,3);
-		canvas.context.drawImage(this.card,this.x ,this.y ,(this.card.width/(5.5))*rw,(this.card.height/(5.5))*rh);
+		canvas.context.drawImage(this.card,this.x ,this.y ,(this.card.width/(5.5)),(this.card.height/(5.5)));
 	} ;
 	
 	Card.prototype.zoom = function (canvas) {
 		if (this.selected) this.drawRectangle(canvas,2);
-		canvas.context.drawImage(this.card,this.x, (this.y-this.card.height/(9.5)) , (this.card.width/(3.5))*rw, (this.card.height/(3.5))*rh);
+		canvas.context.drawImage(this.card,this.x, (this.y-this.card.height/(9.5)) , (this.card.width/(3.5)), (this.card.height/(3.5)));
 	};
 	
 	Card.prototype.mouseOn = function (canvas, mx, my) {
-		//var s = scale();
 		if( mx >= this.x
 		&& mx < (this.x+this.card.width/(5.5))
 		&& my >= this.y
@@ -137,9 +134,9 @@
 		canvas.context.lineWidth = "8";
 		canvas.context.strokeStyle = "green";
 		if (scale==3)
-		canvas.context.rect(this.x, this.y, (this.card.width/(5.5))*rw, (this.card.height/(5.5))*rh);
+		canvas.context.rect(this.x, this.y, (this.card.width/(5.5)), (this.card.height/(5.5)));
 		else 
-		canvas.context.rect(this.x, (this.y-this.card.height/(9.5)), (this.card.width/(3.5))*rw, (this.card.height/(3.5))*rh);
+		canvas.context.rect(this.x, (this.y-this.card.height/(9.5)), (this.card.width/(3.5)), (this.card.height/(3.5)));
 		canvas.context.stroke();
 	};	
 	
@@ -290,9 +287,9 @@
 		else canvas.context.fillStyle = "red";
 		if (this.voted) canvas.context.fillStyle = "green";
 		canvas.context.font = nameStyle[0];
-		canvas.context.fillText(this.name, (this.x)*rw, (this.y+this.y*2.4)*rh);
+		canvas.context.fillText(this.name, (this.x), (this.y+this.y*2.4));
 		canvas.context.font = nameStyle[1];
-		canvas.context.fillText (""+this.points+" points", (this.x)*rw, (this.y+this.y*2.8)*rh);
+		canvas.context.fillText (""+this.points+" points", (this.x), (this.y+this.y*2.8));
 	}
 	}
 /*-------------------------------------------------------------------------------------------------------------------*/	
@@ -333,7 +330,6 @@
 	}
 	
 	Players.prototype.drawPlayers = function(canvas) {
-		//var w=this.startW, h=this.startH;
 		this.startW = 0.12*canvas.can.width;
 		this.startH = 0.06*canvas.can.height;
 		this.endW = 0.88*canvas.can.width;
@@ -367,7 +363,7 @@
 		this.submitY = 0.85*canvas.can.height;
 		if (cards.isSelected()) this.submit.src = "img/submit_t.png";
 		else this.submit.src = "img/submit.png";
-		canvas.context.drawImage(this.submit,this.submitX, this.submitY, (this.submit.width/(5))*rw, (this.submit.height/(5))*rh);
+		canvas.context.drawImage(this.submit,this.submitX, this.submitY, (this.submit.width/(5)), (this.submit.height/(5)));
 	};
 	
 	Buttons.prototype.mouseOn = function (canvas,mx, my) {
@@ -385,7 +381,7 @@
 	var System = function () {};
 	
 	System.prototype.getMousePos = function (evt) {
-      var rect = canvas.can.getBoundingClientRect();
+      var rect = canvas.div.getBoundingClientRect();
       return {
         x: evt.clientX - rect.left,
         y: evt.clientY - rect.top
@@ -401,19 +397,6 @@
 	  buttons.loadButtons(canvas);
 	  
 	  events.setEventListener();
-	  
-	  originalW =window.innerWidth;
-      originalH =window.innerHeight;
-		
-		
-	  newW =window.innerWidth;
-      newH =window.innerHeight;
-		
-	  rw = newW/originalW;
-	  rh = newH/originalH;
-	  
-	  //originalW = newW;
-	  //originalH = newH;
 	  };
 	  
 	}
