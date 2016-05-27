@@ -37,6 +37,15 @@ tr.selected td {
 .modal-content {
     background: blue url(../img/dixit-blurred.jpg);
 }
+
+.modal-body {
+	color:black;
+}
+
+.well {
+	background-color: rgba(255,255,255,0.5);
+}
+
 .modal-title {
 	font-size: 50px;
     border: none;
