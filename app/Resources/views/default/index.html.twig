@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="jumbotron" style="background-repeat: no-repeat; background-position: 50% 75%; height: 512px; max-height: 720px;">
-        <div class="container">
-            <h1 style="color:yellow; text-shadow: 2px 2px #ff0000;">Welcome!</h1>
-            <p style="color:blue; text-shadow: 2px 2px yellow;">Step into the role of a mysterious storyteller as you slowly uncover the magical world of DiXit!</p>
-            <p><a class="btn btn-primary btn-lg" role="button" data-toggle="modal" data-target="#createRoomModal">Create game &raquo;</a></p>
-        </div>
-    </div>
-
+	<div class="row-fluid">
+		<div class="span12 space">
+			<a id="btn-create" class="btn btn-primary btn-lg form-control" role="button" data-toggle="modal" data-target="#createRoomModal">Create game</a>
+		</div>
+	</div>
+	
+	<div class="row-fluid"></div>
+	
     <div class="panel panel-default" style="opacity:0.6" >
         <!-- Default panel contents -->
         <div class="panel-heading clearfix">

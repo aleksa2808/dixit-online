@@ -30,9 +30,76 @@ tr.selected td {
 }
 
 .jumbotron {
-    background: red url(../img/dixit.jpg);
+    background: blue url(../img/dixit.jpg);
+}
+
+#div1 {
+	width:75%; 
+	height:100%;
+	display:table-cell;
+	height:inherit;
+}
+
+#div2 {
+	display:table-cell;	
+}
+
+#myDiv {
+	width:100%;
+	height:100%;
 }
 
 #myCanvas {
-    background-image: url('../img/vermillion.jpg');
+	height:100%;
 }
+
+.row
+{
+    overflow: hidden;
+}
+
+.row-fluid {
+	padding-bottom:15px;
+}
+
+.row > div
+{
+    margin-bottom: -999999px;
+    padding-bottom: 999999px;
+}
+
+#chat {
+	display:none;
+	width:250px;
+	height:toggle;
+}
+
+#chat2 {
+	display:none;
+	width:250px;
+	height:toggle;
+}
+
+.btn-responsive {
+    white-space: normal !important;
+    word-wrap: break-word;
+}
+
+#btn-create {
+	height:120px;
+	font-size:70px;
+    background: #000 url(../img/dixit.jpg);
+	font-family : newFont;
+	color: black;
+   -webkit-text-fill-color: #ffffff; /* Will override color (regardless of order) */
+   -webkit-text-stroke-width: 1px;
+   -webkit-text-stroke-color: #000000;
+}
+
+
+@font-face {
+    font-family: newFont;
+    src: url(../fonts/LikeCockatoosBold.ttf);
+}
+
+
