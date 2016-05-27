@@ -112,8 +112,10 @@ tr.selected td {
 
 
 @font-face {
+	font-weight: bold;
     font-family: newFont;
-    src: url(../fonts/LikeCockatoosBold.ttf);
+    src: url(../fonts/BlackwoodCastle.ttf);
+	
 }
 
 .font {
@@ -122,9 +124,11 @@ tr.selected td {
 }
 
 .outline {
-   -webkit-text-fill-color: #ffffff; /* Will override color (regardless of order) */
-   -webkit-text-stroke-width: 1px;
-   -webkit-text-stroke-color: #000000;
+	text-shadow: 3px 3px #252b36;
+
+   -webkit-text-fill-color: #305583; /* Will override color (regardless of order) */
+   -webkit-text-stroke-width: 2px;
+   -webkit-text-stroke-color: #b6bdcd;
    
    -moz-text-fill-color: #ffffff; /* Will override color (regardless of order) */
    -moz-text-stroke-width: 1px;
