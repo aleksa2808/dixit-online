@@ -873,16 +873,16 @@
         },
         {
             "name": "gos/pubsub-router-bundle",
-            "version": "v0.2.0",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GeniusesOfSymfony/PubSubRouterBundle.git",
-                "reference": "c36292dc9bd3606107cc834e0368c30be92b9c96"
+                "reference": "c91773a7f8691839aca624eb0b59942b2ad6a3c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GeniusesOfSymfony/PubSubRouterBundle/zipball/c36292dc9bd3606107cc834e0368c30be92b9c96",
-                "reference": "c36292dc9bd3606107cc834e0368c30be92b9c96",
+                "url": "https://api.github.com/repos/GeniusesOfSymfony/PubSubRouterBundle/zipball/c91773a7f8691839aca624eb0b59942b2ad6a3c9",
+                "reference": "c91773a7f8691839aca624eb0b59942b2ad6a3c9",
                 "shasum": ""
             },
             "require": {
@@ -924,7 +924,7 @@
                 "redis",
                 "zmq"
             ],
-            "time": "2016-03-05 12:51:38"
+            "time": "2016-05-27 12:26:09"
         },
         {
             "name": "gos/ratchet",
