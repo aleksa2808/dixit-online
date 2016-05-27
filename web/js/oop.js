@@ -74,7 +74,13 @@
 		$("#results").addClass('hidden');
 		$("#game").addClass('hidden');
 		
-	}); 
+	});
+
+	
+	$("#smodal").click(function(){
+		$('#leaveModal').modal('show');
+	});
+	
 	
 	
 	

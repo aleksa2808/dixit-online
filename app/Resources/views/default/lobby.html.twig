@@ -2,9 +2,6 @@
 
 {% block body %}
 	<div class="row">
-		<button class="btn" id="sresult">SHOW RESULTS</button>
-		<button class="btn" id="sgame">SHOW GAME</button>
-		<button class="btn" id="slobby">SHOW LOBBY</button>
 		
 		<div class="hidden" id="game">
 		
@@ -32,7 +29,7 @@
 					</div>
 					<!-- /input-group -->
 				</div>
-				<a class="btn btn-danger" href="{{ path('results') }}" style="width:250px">Leave</a>
+				<a class="btn btn-danger" id="smodal"  style="width:250px">Leave</a>
 			</div>
 		</div>
 	
@@ -43,7 +40,7 @@
 					<div class="panel-heading clearfix">
 						<h4 class="panel-title pull-left" style="padding-top: 7.5px;">Results</h4>
 						<form class="pull-right form-inline">
-							<a href="{{ path('lobby', {'roomId': 1}) }}" class="btn btn-primary btn-sm">Back to lobby</a>
+							<a href="#lobby"  id="slobby" class="btn btn-primary btn-sm">Back to lobby</a>
 						</form>
 					</div>
 					<!-- Table -->
@@ -131,7 +128,7 @@
 					{% endfor %}
 					</ul>
 				</div>
-				<a class="btn btn-warning" href="{{ path('game') }}" style="width:250px">Ready!</a>
+				<a class="btn btn-warning" href="#game" id="sgame" style="width:250px">Ready!</a>
 				<a class="btn btn-danger" href="{{ path('homepage') }}" style="width:250px">Leave</a>
 			</div>
 		</div>		
@@ -160,6 +157,20 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+    <div class="modal fade" id="leaveModal" tabindex="-1" role="dialog" aria-labelledby="leaveModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="leaveModalLabel">Are you sure you want to leave game?</h3>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+					<a class="btn btn-primary" href="#results"  id="sresult" data-dismiss="modal">Yes</a>
                 </div>
             </div>
         </div>
