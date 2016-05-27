@@ -40,8 +40,6 @@ class DefaultController extends Controller
      */
     public function lobbyAction(Request $request, $roomId)
     {
-        $request->getSession()->set('name', 'blorgzor');
-
         $redis = $this->container->get('snc_redis.default');
         if (!$redis->zscore('rooms', $roomId))
         {
