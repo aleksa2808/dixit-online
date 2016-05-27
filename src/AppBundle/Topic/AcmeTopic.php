@@ -35,9 +35,22 @@ class AcmeTopic implements TopicInterface
     public function onSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         //this will broadcast the message to ALL subscribers of this topic.
+        if ($this->redisClient->sismember('room:'.$request->getAttributes()->get('room').':members', $connection->Session->getId())){
 
-        $topic->broadcast(['msg' => $connection->Session->get('name') . " has joined " . $this->redisClient->hget('room:'.$request->getAttributes()->get('room'), 'name')]); //$topic->getId()]);
-        $topic->broadcast(['msg' => $this->clientManipulator->getClient($connection) . " has joined " . $topic->getId()]);
+            if (!$this->redisClient->sismember('room:'.$request->getAttributes()->get('room').':rmembers', $connection->Session->getId())){
+
+                $this->redisClient->sadd('room:'.$request->getAttributes()->get('room').':rmembers', $connection->Session->getId());
+                $topic->broadcast(['msg' => $connection->Session->get('name') . " has joined " . $this->redisClient->hget('room:'.$request->getAttributes()->get('room'), 'name')]); //$topic->getId()]);
+                $topic->broadcast(['msg' => $this->clientManipulator->getClient($connection) . " has joined " . $topic->getId()]);
+            }
+            else {
+                //todo: add increment ws protection
+
+                $connection->close();
+            }
+        }else $connection->close();
+
+
     }
 
     /**
@@ -51,7 +64,16 @@ class AcmeTopic implements TopicInterface
     public function onUnSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg'=> $connection->resourceId."has left the room (channel\"" . $topic->getId() . "\")"]);
+        if ($this->redisClient->sismember('room:'.$request->getAttributes()->get('room').':rmembers', $connection->Session->getId())){
+
+            //todo: add increment ws protection
+
+            $this->redisClient->srem('room:'.$request->getAttributes()->get('room').':rmembers', $connection->Session->getId());
+            $this->redisClient->srem('room:'.$request->getAttributes()->get('room').':members', $connection->Session->getId());
+            $topic->broadcast(['msg'=> $connection->resourceId."has left the room (channel\"" . $topic->getId() . "\")"]);
+
+        }
+
     }
 
     /**

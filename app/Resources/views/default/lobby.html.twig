@@ -179,7 +179,8 @@
         websocket.on("socket/connect", function(session){
             ses = session;
 
-            session.subscribe("acme/mileva", function(uri, payload){
+
+            session.subscribe("acme/"+{{ room }}, function(uri, payload){
                 console.log("Received message", payload);
 
                 var text = "";
@@ -205,7 +206,7 @@
             $('#sendButton').click(function(e) {
                 e.preventDefault();
                 var inputText = $("#inputText");
-                if (null !== ses && inputText.val() !== "") ses.publish("acme/mileva", {msg: inputText.val()});
+                if (null !== ses && inputText.val() !== "") ses.publish("acme/"+{{ room }}, {msg: inputText.val()});
                 inputText.val("");
             });
         });

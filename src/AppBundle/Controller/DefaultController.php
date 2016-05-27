@@ -49,6 +49,14 @@ class DefaultController extends Controller
         {
             $redis->sadd('room:'.$roomId.':members', $sessionId);
         }
+        else if ($redis->sismember('room:'.$roomId.':rmembers', $sessionId)){
+            $this->addFlash(
+                'notice',
+                'Already in this room!'
+            );
+            return $this->redirectToRoute('homepage');
+
+        }
 
         $members = $redis->smembers('room:'.$roomId.':members');
 
