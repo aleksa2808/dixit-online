@@ -26,6 +26,14 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/entry", name="entry")
+     */
+    public function entryAction(Request $request)
+    {
+        return $this->render('default/entry.html.twig');
+    }
+
+    /**
      * @Route("/lobby/{roomId}", name="lobby", requirements={
      *     "roomId": "\d+"
      * })
@@ -67,26 +75,6 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/game/{roomId}", name="game", defaults={"roomId" = 1}, requirements={
-     *     "roomId": "\d+"
-     * })
-     */
-    public function gameAction(Request $request, $roomId)
-    {
-        return $this->render('default/game.html.twig');
-    }
-
-    /**
-     * @Route("/results/{roomId}", name="results", defaults={"roomId" = 1}, requirements={
-     *     "roomId": "\d+"
-     * })
-     */
-    public function resultsAction(Request $request, $roomId)
-    {
-        return $this->render('default/results.html.twig');
-    }
-
-    /**
      * @Route("/create-room", name="create-room")
      */
     public function createRoomAction(Request $request)
@@ -106,7 +94,6 @@ class DefaultController extends Controller
 
                 $redis = $this->container->get('snc_redis.default');
                 $roomId = $redis->incr('room:id');
-                $redis->zadd('rooms', array($roomId => $roomId));
                 $redis->hmset('room:'.$roomId, array(
                         'name' => $room->getName(),
                         'maxMembers' => $room->getMaxMembers(),
@@ -114,11 +101,10 @@ class DefaultController extends Controller
                         'owner' => $room->getOwner()
                 ));
                 $redis->sadd('room:'.$roomId.':members', $room->getOwner());
+                $redis->zadd('rooms', array($roomId => $roomId));
 
                 // TODO: Better success signal needed
-                $response = new Response($roomId);
-                $response->headers->set('Content-Type', 'application/json');
-                return $response;
+                return new JsonResponse($roomId);
             }
 
             return $this->render('default/form.html.twig', array(
@@ -140,21 +126,24 @@ class DefaultController extends Controller
             $ROOMS_PER_PAGE = 10;
 
             $redis = $this->container->get('snc_redis.default');
-            $roomIds = $redis->zrange('rooms', $ROOMS_PER_PAGE * $roomsPage, $ROOMS_PER_PAGE * $roomsPage + $ROOMS_PER_PAGE - 1);
+            $roomIds = $redis->zrange('rooms', $ROOMS_PER_PAGE * $roomsPage, $ROOMS_PER_PAGE * $roomsPage + $ROOMS_PER_PAGE - 2);
 
             $rooms = array();
 
             foreach ($roomIds as $roomId) {
                 $roomInfo = $redis->hgetall('room:'.$roomId);
                 $numMembers = $redis->scard('room:'.$roomId.':members');
-                $roomTableRow = array(
-                    'id' => $roomId,
-                    'name' => $roomInfo['name'],
-                    'owner' => $roomInfo['owner'],
-                    'hasPassword' => $roomInfo['password'] != "" ? 'Yes' : 'No',
-                    'members' => $numMembers.'/'.$roomInfo['maxMembers']
-                );
-                array_push($rooms, $roomTableRow);
+
+                if ($roomInfo && $numMembers) {
+                    $roomTableRow = array(
+                        'id' => $roomId,
+                        'name' => $roomInfo['name'],
+                        'owner' => $roomInfo['owner'],
+                        'hasPassword' => $roomInfo['password'] != "" ? 'Yes' : 'No',
+                        'members' => $numMembers.'/'.$roomInfo['maxMembers']
+                    );
+                    array_push($rooms, $roomTableRow);
+                }
             }
 
             return new JsonResponse($rooms);
