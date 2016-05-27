@@ -2,6 +2,7 @@ body {
   padding-top: 20px;
   padding-bottom: 20px;
   background: #000 url(../img/back.jpg);
+  background-size: cover;
 }
 
 footer {
@@ -31,6 +32,15 @@ tr.selected td {
 
 .jumbotron {
     background: blue url(../img/dixit.jpg);
+}
+
+.modal-content {
+    background: blue url(../img/dixit-blurred.jpg);
+}
+.modal-title {
+	font-size: 50px;
+    border: none;
+	color: black;
 }
 
 #div1 {
@@ -89,17 +99,35 @@ tr.selected td {
 	height:120px;
 	font-size:70px;
     background: #000 url(../img/dixit.jpg);
-	font-family : newFont;
-	color: black;
-   -webkit-text-fill-color: #ffffff; /* Will override color (regardless of order) */
-   -webkit-text-stroke-width: 1px;
-   -webkit-text-stroke-color: #000000;
 }
 
 
 @font-face {
     font-family: newFont;
     src: url(../fonts/LikeCockatoosBold.ttf);
+}
+
+.font {
+	font-family : newFont;
+	color: black;
+}
+
+.outline {
+   -webkit-text-fill-color: #ffffff; /* Will override color (regardless of order) */
+   -webkit-text-stroke-width: 1px;
+   -webkit-text-stroke-color: #000000;
+   
+   -moz-text-fill-color: #ffffff; /* Will override color (regardless of order) */
+   -moz-text-stroke-width: 1px;
+   -moz-text-stroke-color: #000000;
+   
+   -o-text-fill-color: #ffffff; /* Will override color (regardless of order) */
+   -o-text-stroke-width: 1px;
+   -o-text-stroke-color: #000000;
+   
+   -ms-text-fill-color: #ffffff; /* Will override color (regardless of order) */
+   -ms-text-stroke-width: 1px;
+   -ms-text-stroke-color: #000000;
 }
 
 
