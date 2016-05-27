@@ -49,7 +49,6 @@ tr.selected td {
 .modal-title {
 	font-size: 50px;
     border: none;
-	color: black;
 }
 
 #div1 {
@@ -112,8 +111,10 @@ tr.selected td {
 
 
 @font-face {
+	font-weight: bold;
     font-family: newFont;
-    src: url(../fonts/LikeCockatoosBold.ttf);
+    src: url(../fonts/BlackwoodCastle.ttf);
+	
 }
 
 .font {
@@ -122,21 +123,14 @@ tr.selected td {
 }
 
 .outline {
-   -webkit-text-fill-color: #ffffff; /* Will override color (regardless of order) */
-   -webkit-text-stroke-width: 1px;
-   -webkit-text-stroke-color: #000000;
-   
-   -moz-text-fill-color: #ffffff; /* Will override color (regardless of order) */
-   -moz-text-stroke-width: 1px;
-   -moz-text-stroke-color: #000000;
-   
-   -o-text-fill-color: #ffffff; /* Will override color (regardless of order) */
-   -o-text-stroke-width: 1px;
-   -o-text-stroke-color: #000000;
-   
-   -ms-text-fill-color: #ffffff; /* Will override color (regardless of order) */
-   -ms-text-stroke-width: 1px;
-   -ms-text-stroke-color: #000000;
+	text-shadow:
+	-1.5px -1.5px #b6bdcd,  
+	1.5px -1.5px #b6bdcd,
+	-1.5px 1.5px #b6bdcd,
+    1.5px 1.5px #b6bdcd,
+	3.5px 3px #252b36;
+	color: #305583;
+
 }
 
 
