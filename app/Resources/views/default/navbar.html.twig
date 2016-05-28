@@ -18,8 +18,18 @@
         <li><a href="#" class="nav-item">About</a></li>
       </ul>
 
-      <p class="navbar-text navbar-right"><a href="#" data-toggle="modal" data-target="#loginModal">login</a> | <a href="#" data-toggle="modal" data-target="#registerModal">register</a></p>
-      <p class="navbar-text navbar-right">sessionID: {{ app.session.get('name') }}</p>
+      {#<p class="navbar-text navbar-right"><a href="#" data-toggle="modal" data-target="#loginModal">login</a> | <a href="#" data-toggle="modal" data-target="#registerModal">register</a></p>#}
+      <p class="navbar-text navbar-right">
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+            {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+            <a href="{{ path('fos_user_security_logout') }}">
+                {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+            </a>
+        {% else %}
+            <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a> |
+            <a href="{{ path('fos_user_registration_register') }}">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a>
+        {% endif %}
+      </p>
 
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->

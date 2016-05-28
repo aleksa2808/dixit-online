@@ -124,7 +124,7 @@ class DefaultController extends Controller
             $ROOMS_PER_PAGE = 10;
 
             $redis = $this->container->get('snc_redis.default');
-            $roomIds = $redis->zrange('rooms', $ROOMS_PER_PAGE * $roomsPage, $ROOMS_PER_PAGE * $roomsPage + $ROOMS_PER_PAGE - 2);
+            $roomIds = $redis->zrange('rooms', $ROOMS_PER_PAGE * $roomsPage, $ROOMS_PER_PAGE * $roomsPage + $ROOMS_PER_PAGE - 1);
 
             $rooms = array();
 
@@ -132,7 +132,7 @@ class DefaultController extends Controller
                 $roomInfo = $redis->hgetall('room:'.$roomId);
                 $numMembers = $redis->scard('room:'.$roomId.':members');
 
-                if ($roomInfo && $numMembers) {
+                if ($roomInfo && false !== $numMembers) {
                     $roomTableRow = array(
                         'id' => $roomId,
                         'name' => $roomInfo['name'],
