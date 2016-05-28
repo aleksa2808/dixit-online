@@ -114,3 +114,4 @@ snc_redis:
 #          read_write_timeout: 30
   session:
     client: session
+    locking: false
