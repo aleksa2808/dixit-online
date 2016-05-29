@@ -1,5 +1,5 @@
 
-	
+	/**
 	window.onload = function () {
 		
 		canvas.canvasID('myCanvas');
@@ -17,17 +17,34 @@
 		players.setPlayer("Dusan","/img/avatar3.png");
 		players.setPlayer("Aleksa","/img/avatar4.png");
 		
-		
-		system.load();
-		
+		//system.load();
 		
 		
-	};
+		
+	};**/
 	
 	
 	
 	window.onresize = function () {
-		system.load();
+			switch (state) {
+				case GameState.IDLE:
+					game.loadIdle();
+					break;
+				case GameState.STORYTELLER:
+					game.loadStoryteller();
+					break;
+				case GameState.CHOOSING:
+					game.loadChoosing();
+					break;
+				case GameState.VOTING:
+					game.loadVoting();
+					break;
+				case GameState.UNCOVER:
+					game.loadUncover();
+					break;
+				default:
+			}
+		//system.load();
 	};
 	
 	$("#toggle1").click(function(){
@@ -43,7 +60,7 @@
 		$("#game").addClass('hidden');
 		$("#lobby").addClass('hidden');
 		
-	}); 
+	});	
 	
 	$("#sgame").click(function(){
 		$("#game").removeClass('hidden');
@@ -51,10 +68,17 @@
 		$("#lobby").addClass('hidden');
 		canvas.canvasID('myCanvas');
 		canvas.setDiv("can");
-		canvas.setBgImage('/img/lane.jpg');
+		canvas.setBgImage('/img/table.jpg');
 		
-		for (i=1; i<7; i++)
-		cards.setCard(i,"/img/00"+i+".png");
+		submitted.setNum(4);
+		
+		for (i=1; i<5; i++)
+			submitted.setCard(i,"/img/00"+i+".png");
+		
+		for (i=1; i<7; i++) {
+			cards.setCard(i,"/img/00"+i+".png");
+		}
+		
 		
 		
 		players.setNum(4);
@@ -64,8 +88,27 @@
 		players.setPlayer("Dusan","/img/avatar3.png");
 		players.setPlayer("Aleksa","/img/avatar4.png");
 		
+			switch (state) {
+				case GameState.IDLE:
+					game.loadIdle();
+					break;
+				case GameState.STORYTELLER:
+					game.loadStoryteller();
+					break;
+				case GameState.CHOOSING:
+					game.loadChoosing();
+					break;
+				case GameState.VOTING:
+					game.loadVoting();
+					break;
+				case GameState.UNCOVER:
+					game.loadUncover();
+					break;
+				default:
+			}
 		
-		system.load();
+		//
+		//system.load();
 		
 	}); 
 	
@@ -81,8 +124,55 @@
 		$('#leaveModal').modal('show');
 	});
 	
+	$("#idle").click(function(){
+		state=GameState.IDLE;
+		game.loadIdle();
+		$('#idle').addClass('active');
+		$('#storyteller').removeClass('active');
+		$('#choosing').removeClass('active');
+		$('#voting').removeClass('active');
+		$('#uncover').removeClass('active');
+	});
 	
+	$("#storyteller").click(function(){
+		state=GameState.STORYTELLER;
+		game.loadStoryteller();
+		$('#idle').removeClass('active');
+		$('#storyteller').addClass('active');
+		$('#choosing').removeClass('active');
+		$('#voting').removeClass('active');
+		$('#uncover').removeClass('active');
+	});
 	
+	$("#choosing").click(function(){
+		state=GameState.CHOOSING;
+		game.loadChoosing();
+		$('#idle').removeClass('active');
+		$('#storyteller').removeClass('active');
+		$('#choosing').addClass('active');
+		$('#voting').removeClass('active');
+		$('#uncover').removeClass('active');
+	});
+	
+	$("#voting").click(function(){
+		state=GameState.VOTING;
+		game.loadVoting();
+		$('#idle').removeClass('active');
+		$('#storyteller').removeClass('active');
+		$('#choosing').removeClass('active');
+		$('#voting').addClass('active');
+		$('#uncover').removeClass('active');
+	});
+	
+	$("#uncover").click(function(){
+		state=GameState.UNCOVER;
+		game.loadUncover();
+		$('#idle').removeClass('active');
+		$('#storyteller').removeClass('active');
+		$('#choosing').removeClass('active');
+		$('#voting').removeClass('active');
+		$('#uncover').addClass('active');
+	});
 	
 /*--------------------------------------------------------- CANVAS CLASS ----------------------------------------------------------*/	
 	{
@@ -104,6 +194,8 @@
 	
 	Canvas.prototype.setBgImage = function (img) {
 		this.can.style.backgroundImage = "url('"+img+"')";
+		this.can.style.backgroundImage.width = this.can.width;
+		this.can.style.backgroundImage.height = this.can.height;
 	};
 	
 	}
@@ -140,39 +232,48 @@
 	};
 	
 	Card.prototype.draw = function (canvas) {
+		this.w = 0.1*canvas.can.width;
+		this.h = 0.2244*canvas.can.height;
 		if (this.selected) this.drawRectangle(canvas,3);
-		canvas.context.drawImage(this.card,this.x ,this.y ,(this.card.width/(5.5)),(this.card.height/(5.5)));
+		canvas.context.drawImage(this.card,this.x ,this.y ,this.w,this.h);
 	} ;
 	
 	Card.prototype.zoom = function (canvas) {
+		this.z = 0.13*canvas.can.height;
+		this.wz = 0.16*canvas.can.width;
+		this.hz = 0.35*canvas.can.height;
 		if (this.selected) this.drawRectangle(canvas,2);
-		canvas.context.drawImage(this.card,this.x, (this.y-this.card.height/(9.5)) , (this.card.width/(3.5)), (this.card.height/(3.5)));
+		canvas.context.drawImage(this.card,this.x, (this.y-this.z) , this.wz, this.hz);
 	};
 	
 	Card.prototype.mouseOn = function (canvas, mx, my) {
+		this.w = 0.1*canvas.can.width;
+		this.h = 0.2244*canvas.can.height;
 		if( mx >= this.x
-		&& mx < (this.x+this.card.width/(5.5))
+		&& mx < (this.x+this.w)
 		&& my >= this.y
-		&& my < ((this.y+this.card.height/(5.5))) 
+		&& my < (this.y+this.h) 
 		)
 			return true;
 		else return false;
 	};
 
 	Card.prototype.drawRectangle = function (canvas, scale) {
+		this.z = 0.13*canvas.can.height;
+		this.w = 0.1*canvas.can.width;
+		this.h = 0.2244*canvas.can.height;
+		this.wz = 0.16*canvas.can.width;
+		this.hz = 0.35*canvas.can.height;
 		canvas.context.beginPath();
 		canvas.context.lineWidth = "8";
 		canvas.context.strokeStyle = "green";
 		if (scale==3)
-		canvas.context.rect(this.x, this.y, (this.card.width/(5.5)), (this.card.height/(5.5)));
+		canvas.context.rect(this.x, this.y, (this.w), (this.h));
 		else 
-		canvas.context.rect(this.x, (this.y-this.card.height/(9.5)), (this.card.width/(3.5)), (this.card.height/(3.5)));
+		canvas.context.rect(this.x, (this.y-this.z), (this.wz), (this.hz));
 		canvas.context.stroke();
 	};	
 	
-	Card.prototype.remove = function () {
-		this.card.src="";
-	};
 	}
 /*-------------------------------------------------------------------------------------------------------------------*/	
 	
@@ -193,11 +294,11 @@
 		this.card [4] = new Card();
 		this.card [5] = new Card();
 		
-		this.back = new Image();
-		this.back.src = "/img/back.png";
+		this.back = new Card();
+		this.back.setCard("/img/back.png");
 		
 		this.selected = 6;
-		this.submitted = false;
+		this.submitted = 6;
 		
 		
 	};
@@ -232,27 +333,29 @@
 	};
 	
 	Cards.prototype.setSubmitted = function() {
-	this.submitted=true;
+	this.submitted = this.selected;
+	this.selected = 6;
 	this.deselectAll();
-	this.card[this.selected].remove();
 	
 	};
 	
 	Cards.prototype.drawCards = function (canvas) {
 		this.startW = 0.12*canvas.can.width;
 		this.endW = 0.75*canvas.can.width;
-		this.startH = 0.7 * canvas.can.height;
+		this.startH = 0.75 * canvas.can.height;
 		var k = (this.endW - this.startW)/(6-1);
 		var w = this.startW;
 		
 		for ( i=0; i<6; i++) {
-			this.card[i].setX(w);
-			this.card[i].setY(this.startH);
-			this.card[i].draw(canvas);
-			w+=k;
+			if (this.submitted!=i) {
+				this.card[i].setX(w);
+				this.card[i].setY(this.startH);
+				this.card[i].draw(canvas);
+				w+=k;
+			}
 		}
 		
-		canvas.context.drawImage(this.back,(canvas.can.width*0.03), (canvas.can.height*0.4), (this.card[0].card.width/(5.5)), (this.card[0].card.height/(5.5)));
+		canvas.context.drawImage(this.back.card,(canvas.can.width*0.03), (canvas.can.height*0.45), (canvas.can.width*0.1), (canvas.can.height*0.2244));
 	}; 
 	}
 /*-------------------------------------------------------------------------------------------------------------------*/	
@@ -305,11 +408,11 @@
 	};
 	
 	Player.prototype.drawPlayer = function (canvas) {
-		var nameStyle = ["bold 12px Arial", "italic 11px Arial"];
+		var nameStyle = ["bold "+0.03*canvas.can.height+"px Arial", "italic "+0.03*canvas.can.height+"px Arial"];
 		var w = this.x;
 		var h = this.y;
-		var imgW = (this.avatar.width/(6));
-		var imgH = (this.avatar.height/(6));
+		var imgW = 0.0649*canvas.can.width;
+		var imgH = 0.1*canvas.can.height;
 		
 		canvas.context.drawImage(this.avatar, w, h, imgW, imgH );
 		if (this.storyteller ) canvas.context.fillStyle = "blue";
@@ -317,9 +420,9 @@
 		else canvas.context.fillStyle = "red";
 		if (this.voted) canvas.context.fillStyle = "green";
 		canvas.context.font = nameStyle[0];
-		canvas.context.fillText(this.name, (this.x), (this.y+this.y*2.4));
+		canvas.context.fillText(this.name, (this.x), (this.y+imgH+0.03*canvas.can.height));
 		canvas.context.font = nameStyle[1];
-		canvas.context.fillText (""+this.points+" points", (this.x), (this.y+this.y*2.8));
+		canvas.context.fillText (""+this.points+" points", (this.x), (this.y+imgH+0.06*canvas.can.height));
 	}
 	}
 /*-------------------------------------------------------------------------------------------------------------------*/	
@@ -390,16 +493,20 @@
 	
 	Buttons.prototype.loadButtons = function (canvas) {
 		this.submitX = 0.85*canvas.can.width;
-		this.submitY = 0.85*canvas.can.height;
-		if (cards.isSelected()) this.submit.src = "/img/submit_t.png";
+		this.submitY = 0.9*canvas.can.height;
+		this.w = 0.142*canvas.can.width;
+		this.h = 0.054*canvas.can.height;
+		if (cards.isSelected() || submitted.isSelected()) this.submit.src = "/img/submit_t.png";
 		else this.submit.src = "/img/submit.png";
-		canvas.context.drawImage(this.submit,this.submitX, this.submitY, (this.submit.width/(5)), (this.submit.height/(5)));
+		canvas.context.drawImage(this.submit,this.submitX, this.submitY, this.w, this.h);
 	};
 	
 	Buttons.prototype.mouseOn = function (canvas,mx, my) {
 		this.submitX = 0.85*canvas.can.width;
-		this.submitY = 0.85*canvas.can.height;
-		if( mx >= this.submitX && mx < (this.submitX+this.submit.width/(5)) && my >= this.submitY && my < (this.submitY+this.submit.height/(5)))
+		this.submitY = 0.9*canvas.can.height;
+		this.w = 0.142*canvas.can.width;
+		this.h = 0.054*canvas.can.height;
+		if( mx >= this.submitX && mx < (this.submitX+this.w) && my >= this.submitY && my < (this.submitY+this.h))
 			return true;
 		else return false;
 	};
@@ -417,17 +524,6 @@
         y: evt.clientY - rect.top
        };
     };
-
-	System.prototype.load = function () {
-	  canvas.size();
-	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
-	  
-	  players.drawPlayers(canvas);
-	  cards.drawCards(canvas);
-	  buttons.loadButtons(canvas);
-	  
-	  events.setEventListener();
-	  };
 	  
 	}
 /*-------------------------------------------------------------------------------------------------------------------*/		
@@ -442,62 +538,383 @@
 	};
 	
 	Events.prototype.eventClick = function (evt) {
-      var mousePos = system.getMousePos(evt);
-	  if (cards.card[0].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  cards.setSelected(0);
-	  system.load();
-	 }
-	  else if (cards.card[1].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  cards.setSelected(1);
-	  system.load();
-	  }
-	  else if (cards.card[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  cards.setSelected(2);
-	  system.load();
-	  }
-	  else if (cards.card[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  cards.setSelected(3);
-	  system.load();
-	  }
-	  else if (cards.card[4].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  cards.setSelected(4);
-	  system.load();
-	  }
-	  else if (cards.card[5].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  cards.setSelected(5);
-	  system.load();
-	  }
-	  if (buttons.mouseOn(canvas, mousePos.x, mousePos.y)) {
-		if (cards.isSelected()) {
-			$('#addDescriptionModal').modal('show');
-		}
-	  }
+		var mousePos = system.getMousePos(evt);
+		switch (state) {
+			case GameState.IDLE:
+				game.loadIdle();
+				break;
+				
+			case GameState.STORYTELLER:
+				if (cards.card[0].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(0);
+					game.loadStoryteller();
+				}
+				 else if (cards.card[1].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(1);
+					game.loadStoryteller();
+				}
+				else if (cards.card[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(2);
+					game.loadStoryteller();
+				}
+				else if (cards.card[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(3);
+					game.loadStoryteller();
+				}
+				else if (cards.card[4].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(4);
+					game.loadStoryteller();
+				}
+				else if (cards.card[5].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(5);
+					game.loadStoryteller();
+				}
+				if (buttons.mouseOn(canvas, mousePos.x, mousePos.y)) {
+					if (cards.isSelected()) {
+						cards.setSubmitted();
+						$('#addDescriptionModal').modal('show');
+						cards.deselectAll();
+					}
+				}
+				break;
+				
+			case GameState.CHOOSING:
+				if (cards.card[0].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(0);
+					game.loadChoosing();
+				}
+				 else if (cards.card[1].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(1);
+					game.loadChoosing();
+				}
+				else if (cards.card[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(2);
+					game.loadChoosing();
+				}
+				else if (cards.card[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(3);
+					game.loadChoosing();
+				}
+				else if (cards.card[4].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(4);
+					game.loadChoosing();
+				}
+				else if (cards.card[5].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					cards.setSelected(5);
+					game.loadChoosing();
+				}
+				if (buttons.mouseOn(canvas, mousePos.x, mousePos.y)) {
+					if (cards.isSelected()) {
+						cards.deselectAll();
+					}
+				}
+				break;
+				
+			case GameState.VOTING:
+				if (submitted.cards[0].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					submitted.setSelected(0);
+					game.loadVoting();
+				}
+				else if (submitted.cards[1].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					submitted.setSelected(1);
+					game.loadVoting();
+				}
+				else if (submitted.cards[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					submitted.setSelected(2);
+					game.loadVoting();
+				}
+				else if (submitted.cards[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					submitted.setSelected(3);
+					game.loadVoting();
+				}
+				else if (submitted.num == 5) {
+					if (submitted.cards[4].mouseOn(canvas, mousePos.x, mousePos.y)) {
+						submitted.setSelected(4);
+						game.loadVoting();
+					}
+				}
+				else if (submitted.num == 6) {
+					if (submitted.cards[4].mouseOn(canvas, mousePos.x, mousePos.y)) {
+						submitted.setSelected(4);
+						game.loadVoting();
+					}
+				}
+				if (buttons.mouseOn(canvas, mousePos.x, mousePos.y)) {
+					if (submitted.isSelected()) {
+						submitted.deselectAll();
+					}
+				}
+				break;
+				
+			case GameState.UNCOVER:
+				if (cards.back.mouseOn(canvas, mousePos.x, mousePos.y)) {
+						cards.setCard(cards.submitted, "/img/015.png");
+					}
+				game.loadUncover();
+				break;
+				
+			default:
+		} 
+	  
 	};
 	
 	Events.prototype.eventMouseMove = function (evt) {
-      var mousePos = system.getMousePos(evt);
-	  if (cards.card[0].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  system.load();
-	  cards.card[0].zoom(canvas);}
-	  else if (cards.card[1].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  system.load();
-	  cards.card[1].zoom(canvas);}
-	  else if (cards.card[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  system.load();
-	  cards.card[2].zoom(canvas);}
-	  else if (cards.card[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  system.load();
-	  cards.card[3].zoom(canvas);}
-	  else if (cards.card[4].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  system.load();
-	  cards.card[4].zoom(canvas);}
-	  else if (cards.card[5].mouseOn(canvas, mousePos.x, mousePos.y)) {
-	  system.load();
-	  cards.card[5].zoom(canvas);}
-	  else system.load();
-	  
+        var mousePos = system.getMousePos(evt);
+		switch (state) {
+			case GameState.IDLE:
+				game.loadIdle();
+				break;
+				
+			case GameState.STORYTELLER:
+				if (cards.card[0].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadStoryteller();
+					cards.card[0].zoom(canvas);
+					}
+				else if (cards.card[1].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadStoryteller();
+					cards.card[1].zoom(canvas);
+					}
+				else if (cards.card[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadStoryteller();
+					cards.card[2].zoom(canvas);
+					}
+				else if (cards.card[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadStoryteller();
+					cards.card[3].zoom(canvas);
+					}
+				else if (cards.card[4].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadStoryteller();
+					cards.card[4].zoom(canvas);
+					}
+				else if (cards.card[5].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadStoryteller();
+					cards.card[5].zoom(canvas);
+					}
+				break;
+				
+			case GameState.CHOOSING:
+				if (cards.card[0].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadChoosing();
+					cards.card[0].zoom(canvas);
+					}
+				else if (cards.card[1].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadChoosing();
+					cards.card[1].zoom(canvas);
+					}
+				else if (cards.card[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadChoosing();
+					cards.card[2].zoom(canvas);
+					}
+				else if (cards.card[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadChoosing();
+					cards.card[3].zoom(canvas);
+					}
+				else if (cards.card[4].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadChoosing();
+					cards.card[4].zoom(canvas);
+					}
+				else if (cards.card[5].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadChoosing();
+					cards.card[5].zoom(canvas);
+					}
+				break;
+				
+			case GameState.VOTING:
+				if (submitted.cards[0].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadVoting();
+					submitted.cards[0].zoom(canvas);
+					}
+				else if (submitted.cards[1].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadVoting();
+					submitted.cards[1].zoom(canvas);
+					}
+				else if (submitted.cards[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadVoting();
+					submitted.cards[2].zoom(canvas);
+					}
+				else if (submitted.cards[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
+					game.loadVoting();
+					submitted.cards[3].zoom(canvas);
+					}
+				break;
+				
+			case GameState.UNCOVER:
+				game.loadUncover();
+				break;
+				
+			default:
+		}
 	};
 	}
+/*-------------------------------------------------------------------------------------------------------------------*/	
+
+/*--------------------------------------------------------- GAME ----------------------------------------------------------*/
+{
+	var Game = function () {};
+	
+	Game.prototype.loadIdle = function () {	
+	  canvas.size();
+	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
+	  
+	  players.drawPlayers(canvas);
+	  cards.drawCards(canvas);
+	  buttons.loadButtons(canvas);
+	  
+	  events.setEventListener();
+	};
+	
+	Game.prototype.loadStoryteller = function () {
+	  canvas.size();
+	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
+	  players.drawPlayers(canvas);
+	  cards.drawCards(canvas);
+	  buttons.loadButtons(canvas);
+	  
+	  //postaviti pripovedaca
+	  //players.player[i].isStoryteller();
+	  
+	  events.setEventListener();
+		
+	};
+	
+	Game.prototype.loadChoosing = function () {	
+	  canvas.size();
+	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
+	  
+	  players.drawPlayers(canvas);
+	  cards.drawCards(canvas);
+	  buttons.loadButtons(canvas);
+	  //submitted.drawCards(canvas);
+	  submitted.drawDescription(canvas);
+	  
+	  events.setEventListener();
+	};
+	
+	Game.prototype.loadVoting = function () {	
+	  canvas.size();
+	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
+	  
+	  players.drawPlayers(canvas);
+	  cards.drawCards(canvas);
+	  buttons.loadButtons(canvas);
+	  submitted.drawCards(canvas);
+	  submitted.drawDescription(canvas);
+	  
+	  events.setEventListener();
+	};
+	
+	Game.prototype.loadUncover = function () {
+	  canvas.size();
+	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
+	  
+	  players.drawPlayers(canvas);
+	  cards.drawCards(canvas);
+	  buttons.loadButtons(canvas);
+	  
+	  //nacrtaj submitted karte
+	  submitted.drawVoted(canvas);
+	  //ali sada oznaci koja je cija karta i ko je glasao za koju kartu
+	  //update poena
+	  
+	  events.setEventListener();
+		
+	};
+}
+/*-------------------------------------------------------------------------------------------------------------------*/	
+
+/*--------------------------------------------------------- SUBMITTED ----------------------------------------------------------*/
+{
+	var Submitted = function () {
+	};
+	
+	Submitted.prototype.setNum = function (num) {
+		this.cards = new Array();
+		this.num = num;
+		for (i=0; i<this.num; i++) 
+			this.cards[i] = new Card();
+		//odakle uzimam sada image source?
+	};
+	
+	Submitted.prototype.setCard = function (num,img) {
+	this.cards[num-1].setCard(img);
+	};
+	
+	Submitted.prototype.drawCards = function (canvas) {
+		this.startW = 0.22*canvas.can.width;
+		this.endW = 0.85*canvas.can.width;
+		this.startH = 0.45 * canvas.can.height;
+		var k = (this.endW - this.startW)/(this.num-1);
+		var w = this.startW;
+		
+		for ( i=0; i<this.num; i++) {
+			this.cards[i].setX(w);
+			this.cards[i].setY(this.startH);
+			this.cards[i].draw(canvas);
+			w+=k;
+		}
+	};
+	
+	
+	Submitted.prototype.drawDescription = function (canvas) {
+		//uzeti tekst
+		canvas.context.font = "bold 30px newFont";
+		canvas.context.fillStyle = '#305583';
+		canvas.context.fillText("PLACE FOR DESCRIPTION", 0.25*canvas.can.width, 0.35*canvas.can.height);
+		canvas.context.strokeStyle ='#b6bdcd';
+		canvas.context.strokeText("PLACE FOR DESCRIPTION", 0.25*canvas.can.width, 0.35*canvas.can.height);
+	}; 
+	
+	Submitted.prototype.drawVotes = function (canvas) {
+		for (j=0; j<this.num; j++) {  //za karte
+			var k = (this.cards[j].w)/(5);
+			var radius = 0.3*k;
+			var start = this.cards[j].x + radius/2;
+			for (i=0; i<this.num; i++) { //za igrace
+			canvas.context.beginPath();
+			canvas.context.arc(start, this.cards[j].y-5, radius, 0, 2 * Math.PI, false);
+			//boja treba da bude boja onog igraca koji je glasao za tu kartu
+			canvas.context.fillStyle = 'black';
+			canvas.context.fill();
+			canvas.context.stroke();
+			start+=k;
+		}
+		
+		}
+	};
+	
+	Submitted.prototype.drawVoted = function (canvas) {
+		this.drawCards(canvas);
+		this.drawDescription(canvas);
+		//this.drawRectangle(canvas);
+		this.drawVotes(canvas);
+		
+		canvas.context.drawImage(this.back,(canvas.can.width*0.03), (canvas.can.height*0.5), (this.card[0].card.width/(5.5)), (this.card[0].card.height/(5.5)));
+	};
+	
+	Submitted.prototype.deselectAll = function () {
+		for (i=0; i<4; i++)  this.cards[i].deselect();;
+	};
+	
+	Submitted.prototype.setSelected = function (num) {
+	this.deselectAll();
+	
+	this.cards[num].select();
+	this.selected=num;
+	};
+	
+	Submitted.prototype.isSelected = function () {
+		for (i=0; i<4; i++) 
+			if (this.cards[i].selected) return true;
+		return false;	
+	};
+	
+	Submitted.prototype.setSubmitted = function() {
+	this.submitted=true;
+	this.deselectAll();
+	this.cards[this.selected].remove();
+	
+	};
+}
 /*-------------------------------------------------------------------------------------------------------------------*/	
 
 	
@@ -509,7 +926,15 @@
 	buttons = new Buttons(),
 	events = new Events(),
 	system = new System(),
-	originalW, originalH, newW, newH, rw, rh;
+	submitted = new Submitted(),
+	game = new Game(),
+	GameState = {
+		IDLE:1, 
+		STORYTELLER:2, 
+		CHOOSING:3, 
+		VOTING:4, 
+		UNCOVER:5 
+		},
+	state = GameState.IDLE;	
 	}
 /*-------------------------------------------------------------------------------------------------------------------*/	
-
