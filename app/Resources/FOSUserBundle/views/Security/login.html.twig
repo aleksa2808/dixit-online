@@ -7,18 +7,42 @@
     <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 {% endif %}
 
-<form action="{{ path("fos_user_security_check") }}" method="post">
-    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+<div class="jumbotron" style="background-repeat: no-repeat; background-position: 50% 75%; height: 512px; max-height: 720px;">
+        <div class="container">
+            <h1 class="font outline">Welcome!</h1>
+            <p style="color:#305583; text-shadow: 1.5px 1.5px #b6bdcd;">Step into the role of a mysterious storyteller as you slowly uncover the magical world of DiXit!</p>
+            <div class="row">
+				<div class="well">
+				<form action="{{ path("fos_user_security_check") }}" method="post" role="form" class="form-inline">
+				<input class="form-group" type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
 
-    <label for="username">{{ 'security.login.username'|trans }}</label>
-    <input type="text" id="username" name="_username" value="{{ last_username }}" required="required" />
-
-    <label for="password">{{ 'security.login.password'|trans }}</label>
-    <input type="password" id="password" name="_password" required="required" />
-
-    <input type="checkbox" id="remember_me" name="_remember_me" value="on" />
-    <label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>
-
-    <input type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" />
-</form>
+				<div class="col-xs-3">
+					<input placeholder="{{ 'security.login.username'|trans }}" class="form-group form-control" type="text" id="username" name="_username" value="{{ last_username }}" required="required" />
+				</div>
+				<div class="col-xs-3">
+					<input placeholder="{{ 'security.login.password'|trans }}" class="form-group form-control" type="password" id="password" name="_password" required="required" />
+				</div>
+				<div class="col-xs-3">
+					<div class="pull-down">
+						<div class="checkbox">
+						<label class="form-group" for="remember_me"><input type="checkbox" id="remember_me" name="_remember_me" value="on" />{{ 'security.login.remember_me'|trans }}</label>	
+					</div>
+					</div>
+				</div>
+				<div class="col-xs-3">
+					<input class="btn btn-primary btn-md" type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" />
+				</div>
+		
+				</form>
+					<div class="col-xs-12">
+						<div class="pull-right">
+							<h5>Don't have an account? <a href="/register/">Register</a></h5>
+						</div>
+					</div>
+				</div>
+			</div>
+        </div>
+    </div>
 {% endblock fos_user_content %}
+
+
