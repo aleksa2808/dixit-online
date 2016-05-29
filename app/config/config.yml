@@ -71,11 +71,32 @@ assetic:
     filters:
         cssrewrite: ~
 
-# app/config/config.yml
+# FOSUser Configuration
 fos_user:
     db_driver: orm
     firewall_name: main
     user_class: AppBundle\Entity\User
+
+# EasyAdmin Configuration
+easy_admin:
+    entities:
+        User:
+            class: AppBundle\Entity\User
+            list:
+                fields:
+                    - username
+                    - email
+                    - enabled
+                    - lastLogin
+                    - locked
+                    - roles
+            form:
+                fields:
+                    - username
+                    - email
+                    - plainPassword
+                    - roles
+                    - enabled
 
 # Web Socket Configuration
 gos_web_socket:
