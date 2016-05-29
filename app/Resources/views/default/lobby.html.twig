@@ -14,19 +14,19 @@
 			</div>
 			<!-- /.col-lg-6 -->
 			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" id="div2">
-				<a id="toggle1"class="btn btn-success" style="width:250px">Chat</a>
+				<a id="toggle1" class="btn btn-success" style="width:250px">Chat</a>
 				<div class="panel panel-default" id="chat">
 				<!-- Default panel contents -->
 					<div class="panel-heading clearfix">
 						<h4 class="panel-title pull-left">Chat</h4>
 					</div>
-					<textarea id="idChatTextArea" class="form-control" placeholder="The match has started!" rows="15" readonly></textarea>
-					<div class="input-group">
-						<input id="idInput" type="text" class="form-control" placeholder="chat with others">
+					<textarea class="form-control chatTextArea" placeholder="The match has started!" rows="15" readonly></textarea>
+					<form class="input-group">
+						<input id="inputTextGame" type="text" class="form-control" placeholder="chat with others">
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" onclick="fClick()">Send</button>
+							<button class="btn btn-default" id="sendButtonGame" type="submit">Send</button>
 						</span>
-					</div>
+					</form>
 					<!-- /input-group -->
 				</div>
 				<a class="btn btn-danger" id="smodal"  style="width:250px">Leave</a>
@@ -91,15 +91,15 @@
 				<div class="panel panel-default">
 				<!-- Default panel contents -->
 					<div class="panel-heading clearfix">
-						<h4 class="panel-title pull-left">Users in the room</h4>
+						<h4 class="panel-title pull-left">Chat</h4>
 					</div>
-					<textarea class="form-control" placeholder="The match has started!" rows="10" readonly></textarea>
-					<div class="input-group">
-						<input type="text" class="form-control" placeholder="chat with others">
+					<textarea class="form-control chatTextArea" placeholder="The match has started!" rows="10" readonly></textarea>
+					<form class="input-group">
+						<input type="text" id="inputTextResults" class="form-control" placeholder="chat with others">
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button">Send</button>
+							<button class="btn btn-default" type="submit" id="sendButtonResults">Send</button>
 						</span>
-					</div>
+					</form>
 					<!-- /input-group -->
 				</div>
 			</div>
@@ -108,12 +108,12 @@
 
 		<div class="" id="lobby">
 			<div class="col-md-8">
-				<textarea class="form-control" id="idChatTextArea" placeholder="A guest user joined the room." rows="15" readonly></textarea>
+				<textarea class="form-control chatTextArea" placeholder="A guest user joined the room." rows="15" readonly></textarea>
 				<form class="input-group">
-				<input type="text" class="form-control" id="inputText" placeholder="chat with others">
-				<span class="input-group-btn">
-				<input class="btn btn-default" type="submit" id="sendButton" value="Send"/>
-				</span>
+                    <input type="text" class="form-control" id="inputTextLobby" placeholder="chat with others">
+                    <span class="input-group-btn">
+                        <input class="btn btn-default" type="submit" id="sendButtonLobby" value="Send"/>
+                    </span>
 				</form><!-- /input-group -->
 			</div><!-- /.col-lg-6 -->
 			<div class="col-md-3">
@@ -122,11 +122,7 @@
 					<div class="panel-heading clearfix">
 						<h4 class="panel-title pull-left">Users in the room</h4>
 					</div>
-					<ul class="list-group">
-					{% for item in members %}
-					<li class="list-group-item">{{ item }}</li>
-					{% endfor %}
-					</ul>
+					<ul class="list-group" id="memberList"></ul>
 				</div>
 				<a class="btn btn-warning" href="#game" id="sgame" style="width:250px">Ready!</a>
 				<a class="btn btn-danger" href="{{ path('homepage') }}" style="width:250px">Leave</a>
@@ -190,7 +186,6 @@
         websocket.on("socket/connect", function(session){
             ses = session;
 
-
             session.subscribe("acme/"+{{ room }}, function(uri, payload){
                 console.log("Received message", payload);
 
@@ -198,11 +193,19 @@
 
                 if (payload.type === "message") {
                     text = payload.usr + ": " + payload.msg;
-                } else {
+                } else if (payload.type === "members") {
+					var memberList = $('#memberList');
+                    memberList.empty();
+                    payload.members.forEach(function(member) {
+                        memberList.append('<li class="list-group-item">' + member + '</li>');
+                    });
+
+                    return;
+				} else {
                     text = payload.msg;
                 }
-
-                document.getElementById("idChatTextArea").innerHTML += text + "\n";
+                var chat = $('.chatTextArea');
+                chat.val(chat.val() + text + "\n");
             });
         });
 
@@ -214,9 +217,25 @@
 
 
         $(document).ready(function(e) {
-            $('#sendButton').click(function(e) {
+            $('.chatTextArea').val("");
+
+            $('#sendButtonLobby').click(function(e) {
                 e.preventDefault();
-                var inputText = $("#inputText");
+                var inputText = $("#inputTextLobby");
+                if (null !== ses && inputText.val() !== "") ses.publish("acme/"+{{ room }}, {msg: inputText.val()});
+                inputText.val("");
+            });
+
+            $('#sendButtonGame').click(function(e) {
+                e.preventDefault();
+                var inputText = $("#inputTextGame");
+                if (null !== ses && inputText.val() !== "") ses.publish("acme/"+{{ room }}, {msg: inputText.val()});
+                inputText.val("");
+            });
+
+            $('#sendButtonResults').click(function(e) {
+                e.preventDefault();
+                var inputText = $("#inputTextResults");
                 if (null !== ses && inputText.val() !== "") ses.publish("acme/"+{{ room }}, {msg: inputText.val()});
                 inputText.val("");
             });

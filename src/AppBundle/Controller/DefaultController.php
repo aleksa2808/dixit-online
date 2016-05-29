@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Room;
 use AppBundle\Form\CreateRoomType;
+use Predis\Transaction\MultiExec;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -38,37 +39,44 @@ class DefaultController extends Controller
      *     "roomId": "\d+"
      * })
      */
-    public function lobbyAction(Request $request, $roomId)
+    public function lobbyAction($roomId)
     {
         $redis = $this->container->get('snc_redis.default');
+        $user = $this->getUser()->getUsername();
+
+        // checks if room exists
         if (!$redis->zscore('rooms', $roomId))
         {
-            $this->addFlash(
-                'notice',
-                'Room #'.$roomId.' doesn\'t exist!'
-            );
-            return $this->redirectToRoute('homepage');
-        }
+            // checks if the user has a ticket for this room
+            if ($room = $redis->hgetall('ticket:'.$user.':'.$roomId))
+            {
+                $redis->hmset('room:' . $roomId, array(
+                    'name' => $room['name'],
+                    'owner' => $user,
+                    'password' => $room['password'],
+                    'maxMembers' => $room['maxMembers'],
+                ));
+                $redis->sadd('room:' . $roomId . ':members', $user);
+                $redis->zadd('rooms', array($roomId => $roomId));
 
-        $sessionId = $request->getSession()->getId();
-        if (!$redis->sismember('room:'.$roomId.':members', $sessionId))
-        {
-            $redis->sadd('room:'.$roomId.':members', $sessionId);
+                $redis->del('ticket:'.$user.':'.$roomId);
+            }
+            else
+            {
+                $this->addFlash(
+                    'notice',
+                    'Room #' . $roomId . ' doesn\'t exist!'
+                );
+                return $this->redirectToRoute('homepage');
+            }
         }
-        else if ($redis->sismember('room:'.$roomId.':rmembers', $sessionId)){
-            $this->addFlash(
-                'notice',
-                'Already in this room!'
-            );
-            return $this->redirectToRoute('homepage');
-
+        else if ($redis->hget('room:'.$roomId, 'maxMembers') > $redis->scard('room:'.$roomId.':members'))
+        { // TODO: race condition fix
+            $redis->sadd('room:' . $roomId . ':lmembers', $user);
         }
-
-        $members = $redis->smembers('room:'.$roomId.':members');
 
         return $this->render('default/lobby.html.twig', array(
             'room' => $roomId,
-            'members' => $members
         ));
     }
 
@@ -77,7 +85,8 @@ class DefaultController extends Controller
      */
     public function createRoomAction(Request $request)
     {
-        if($request->isXmlHttpRequest()) {
+        if($request->isXmlHttpRequest())
+        {
             $room = new Room();
 
             $form = $this->createForm(CreateRoomType::class, $room);
@@ -86,22 +95,21 @@ class DefaultController extends Controller
 
             if ($form->isSubmitted() && $form->isValid())
             {
-                $room->setOwner($request->getSession()->getId());
+                $user = $this->getUser()->getUsername();
                 if ($room->getName() == "") $room->setName("unnamed");
                 if ($room->getMaxMembers() == "") $room->setMaxMembers(6);
 
                 $redis = $this->container->get('snc_redis.default');
                 $roomId = $redis->incr('room:id');
-                $redis->hmset('room:'.$roomId, array(
+                $redis->hmset('ticket:'.$user.':'.$roomId, array(
                         'name' => $room->getName(),
                         'maxMembers' => $room->getMaxMembers(),
-                        'password' => $room->getPassword(),
-                        'owner' => $room->getOwner()
+                        'password' => $room->getPassword()
                 ));
-                $redis->sadd('room:'.$roomId.':members', $room->getOwner());
-                $redis->zadd('rooms', array($roomId => $roomId));
 
-                // TODO: Better success signal needed
+                // ticket expires after 5 mins
+                $redis->expire('ticket:'.$user.':'.$roomId, 300);
+
                 return new JsonResponse($roomId);
             }
 
@@ -120,7 +128,8 @@ class DefaultController extends Controller
      */
     public function getRoomsAction(Request $request, $roomsPage)
     {
-        if($request->isXmlHttpRequest()) {
+        if($request->isXmlHttpRequest())
+        {
             $ROOMS_PER_PAGE = 10;
 
             $redis = $this->container->get('snc_redis.default');
@@ -128,11 +137,14 @@ class DefaultController extends Controller
 
             $rooms = array();
 
-            foreach ($roomIds as $roomId) {
-                $roomInfo = $redis->hgetall('room:'.$roomId);
-                $numMembers = $redis->scard('room:'.$roomId.':members');
+            foreach ($roomIds as $roomId)
+            {
+                $responses = $redis->transaction()->hgetall('room:'.$roomId)->scard('room:'.$roomId.':members')->execute();
+                $roomInfo = $responses[0];
+                $numMembers = $responses[1];
 
-                if ($roomInfo && false !== $numMembers) {
+                if ($roomInfo && false !== $numMembers)
+                {
                     $roomTableRow = array(
                         'id' => $roomId,
                         'name' => $roomInfo['name'],
@@ -145,7 +157,9 @@ class DefaultController extends Controller
             }
 
             return new JsonResponse($rooms);
-        } else {
+        }
+        else
+        {
             return $this->redirect($this->generateUrl('homepage'));
         }
     }
