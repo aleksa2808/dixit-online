@@ -37,16 +37,21 @@ class AcmeTopic implements TopicInterface
         $roomId = $request->getAttributes()->get('room');
         $user = $this->clientManipulator->getClient($connection)->getUsername();
 
-        if (!$this->redisClient->sismember('room:'.$roomId.':members', $user)) {
-            if ($this->redisClient->sismember('room:' . $roomId . ':lmembers', $user)) {
-                $this->redisClient->sadd('room:' . $roomId . ':members', $user);
-                $this->redisClient->srem('room:' . $roomId . ':lmembers', $user);
-                $topic->broadcast(['msg' => $user . " has joined " . $this->redisClient->hget('room:' . $roomId, 'name')]);
-            }
+        if ($this->redisClient->zscore('rooms', $roomId)) {
+            if (!$this->redisClient->sismember('room:'.$roomId.':members', $user)) {
+                if ($this->redisClient->sismember('room:' . $roomId . ':lmembers', $user)) {
+                    $this->redisClient->sadd('room:' . $roomId . ':members', $user);
+                    $this->redisClient->srem('room:' . $roomId . ':lmembers', $user);
+                    $topic->broadcast(['msg' => $user . " has joined " . $this->redisClient->hget('room:' . $roomId, 'name')]);
+                }
 
-            $topic->broadcast(array('type' => "members", 'members' => $this->redisClient->smembers('room:'.$roomId.':members')));
+                $topic->broadcast(array('type' => "members", 'members' => $this->redisClient->smembers('room:'.$roomId.':members')));
+            } else {
+                $connection->event($topic->getId(), ['msg' => 'Warning! Multiple game tabs are not allowed!']);
+                $connection->close();
+            }
         } else {
-            $connection->event($topic->getId(), ['msg' => 'Warning! Multiple game tabs are not allowed!']);
+            $connection->event($topic->getId(), ['msg' => 'Warning! Game doesn\'t exist.']);
             $connection->close();
         }
     }
@@ -72,24 +77,27 @@ class AcmeTopic implements TopicInterface
         }
 
         if ($userConnections == 1) {
+            // TODO: better page refresh handling
+            if ($this->redisClient->zscore('rooms', $roomId)) {
 //            if ($this->redisClient->sismember('room:'.$roomId.':members', $user)) {
 
                 //todo: add increment ws protection
 
-                $this->redisClient->srem('room:'.$roomId.':members', $user);
+                $this->redisClient->srem('room:' . $roomId . ':members', $user);
 
-                if (!$this->redisClient->scard('room:'.$roomId.':members')) {
+                if (!$this->redisClient->scard('room:' . $roomId . ':members')) {
                     // TODO: race condition fix
                     // everybody left, remove the room
                     $this->redisClient->zrem('rooms', $roomId);
-                    $this->redisClient->del('room:'.$roomId);
-                    $this->redisClient->del('room:'.$roomId.'members');
-                    $this->redisClient->del('room:'.$roomId.'lmembers');
+                    $this->redisClient->del('room:' . $roomId);
+                    $this->redisClient->del('room:' . $roomId . 'members');
+                    $this->redisClient->del('room:' . $roomId . 'lmembers');
                 } else {
-                    $topic->broadcast(['msg'=> $user." has left ".$this->redisClient->hget('room:'.$roomId, 'name')]);
-                    $topic->broadcast(array('type' => "members", 'members' => $this->redisClient->smembers('room:'.$roomId.':members')));
+                    $topic->broadcast(['msg' => $user . " has left " . $this->redisClient->hget('room:' . $roomId, 'name')]);
+                    $topic->broadcast(array('type' => "members", 'members' => $this->redisClient->smembers('room:' . $roomId . ':members')));
                 }
 //            }
+            }
         }
     }
 

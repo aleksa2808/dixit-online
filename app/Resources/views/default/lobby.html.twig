@@ -213,10 +213,14 @@
             //error provides us with some insight into the disconnection: error.reason and error.code
 
             console.log("Disconnected for " + error.reason + " with code " + error.code);
+
+            $('#sendButtonLobby').prop('disabled', true);
+            $('#sendButtonGame').prop('disabled', true);
+            $('#sendButtonResults').prop('disabled', true);
         });
 
 
-        $(document).ready(function(e) {
+        $(document).ready(function() {
             $('.chatTextArea').val("");
 
             $('#sendButtonLobby').click(function(e) {
