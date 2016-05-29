@@ -31,7 +31,7 @@ tr.selected td {
 }
 
 .jumbotron {
-    background: blue url(../img/dixit.jpg);
+    background: blue url(../img/dixit-blurred.jpg);
 }
 
 .modal-content {
@@ -106,7 +106,7 @@ tr.selected td {
 #btn-create {
 	height:120px;
 	font-size:70px;
-    background: #000 url(../img/dixit.jpg);
+    background: #000 url(../img/dixit-blurred.jpg);
 }
 
 

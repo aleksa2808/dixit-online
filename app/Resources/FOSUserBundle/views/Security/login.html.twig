@@ -3,14 +3,14 @@
 {% trans_default_domain 'FOSUserBundle' %}
 
 {% block fos_user_content %}
-{% if error %}
-    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-{% endif %}
+
+
 
 <div class="jumbotron" style="background-repeat: no-repeat; background-position: 50% 75%; height: 512px; max-height: 720px;">
         <div class="container">
+		
             <h1 class="font outline">Welcome!</h1>
-            <p style="color:#305583; text-shadow: 1.5px 1.5px #b6bdcd;">Step into the role of a mysterious storyteller as you slowly uncover the magical world of DiXit!</p>
+            <p style="color:#6f86ac; text-shadow: 1.5px 1.5px #3c6853;">Step into the role of a mysterious storyteller as you slowly uncover the magical world of DiXit!</p>
             <div class="row">
 				<div class="well">
 				<form action="{{ path("fos_user_security_check") }}" method="post" role="form" class="form-inline">
@@ -36,6 +36,9 @@
 		
 				</form>
 					<div class="col-xs-12">
+					{% if error %}
+    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+{% endif %}
 						<div class="pull-right">
 							<h5>Don't have an account? <a href="/register/">Register</a></h5>
 						</div>
