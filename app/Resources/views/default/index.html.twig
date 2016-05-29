@@ -152,11 +152,16 @@
 
             $('#roomTable').find('tbody').on('click', 'tr', function() {
                 $(this).addClass('selected').siblings().removeClass('selected');
-                $('#joinRoomButton').prop('disabled', false);
+                if (!isNaN(parseInt($(this).find('td:first').html()))) {
+                    $('#joinRoomButton').prop('disabled', false);
+                } else {
+                    $(this).removeClass('selected');
+                }
             });
 
             $('#joinRoomButton').on('click', function(e) {
                 var value = parseInt($("#roomTable").find('tr.selected').find('td:first').html());
+                // TODO: Implement better URL generation
                 window.location.href = "lobby/" + value;
             });
 

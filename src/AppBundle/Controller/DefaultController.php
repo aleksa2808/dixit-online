@@ -56,7 +56,7 @@ class DefaultController extends Controller
                     'password' => $room['password'],
                     'maxMembers' => $room['maxMembers'],
                 ));
-                $redis->sadd('room:' . $roomId . ':members', $user);
+                $redis->sadd('room:' . $roomId . ':lmembers', $user);
                 $redis->zadd('rooms', array($roomId => $roomId));
 
                 $redis->del('ticket:'.$user.':'.$roomId);
