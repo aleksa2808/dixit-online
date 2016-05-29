@@ -70,9 +70,9 @@
 		canvas.setDiv("can");
 		canvas.setBgImage('/img/table.jpg');
 		
-		submitted.setNum(4);
+		submitted.setNum(6);
 		
-		for (i=1; i<5; i++)
+		for (i=1; i<7; i++)
 			submitted.setCard(i,"/img/00"+i+".png");
 		
 		for (i=1; i<7; i++) {
@@ -81,12 +81,14 @@
 		
 		
 		
-		players.setNum(4);
+		players.setNum(6);
 		
 		players.setPlayer("Ana","/img/avatar1.ico");
 		players.setPlayer("Tijana","/img/avatar2.png");
 		players.setPlayer("Dusan","/img/avatar3.png");
 		players.setPlayer("Aleksa","/img/avatar4.png");
+		players.setPlayer("Ana","/img/avatar1.ico");
+		players.setPlayer("Tijana","/img/avatar2.png");
 		
 			switch (state) {
 				case GameState.IDLE:
@@ -857,7 +859,7 @@
 	
 	Submitted.prototype.drawDescription = function (canvas) {
 		//uzeti tekst
-		canvas.context.font = "bold 30px newFont";
+		canvas.context.font = "bold "+0.07*canvas.can.height+"px newFont";
 		canvas.context.fillStyle = '#305583';
 		canvas.context.fillText("PLACE FOR DESCRIPTION", 0.25*canvas.can.width, 0.35*canvas.can.height);
 		canvas.context.strokeStyle ='#b6bdcd';
