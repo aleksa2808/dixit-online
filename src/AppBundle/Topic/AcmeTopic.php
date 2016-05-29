@@ -77,8 +77,6 @@ class AcmeTopic implements TopicInterface
         }
 
         if ($userConnections == 1) {
-            // TODO: better page refresh handling
-            if ($this->redisClient->zscore('rooms', $roomId)) {
 //            if ($this->redisClient->sismember('room:'.$roomId.':members', $user)) {
 
                 //todo: add increment ws protection
@@ -90,14 +88,14 @@ class AcmeTopic implements TopicInterface
                     // everybody left, remove the room
                     $this->redisClient->zrem('rooms', $roomId);
                     $this->redisClient->del('room:' . $roomId);
-                    $this->redisClient->del('room:' . $roomId . 'members');
-                    $this->redisClient->del('room:' . $roomId . 'lmembers');
+                    $this->redisClient->del('room:' . $roomId . ':members');
+                    $this->redisClient->del('room:' . $roomId . ':lmembers');
                 } else {
+                    $this->redisClient->hset('room:'.$roomId, 'owner', $this->redisClient->srandmember('room:'.$roomId.':members'));
                     $topic->broadcast(['msg' => $user . " has left " . $this->redisClient->hget('room:' . $roomId, 'name')]);
                     $topic->broadcast(array('type' => "members", 'members' => $this->redisClient->smembers('room:' . $roomId . ':members')));
                 }
 //            }
-            }
         }
     }
 
