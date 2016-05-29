@@ -14,8 +14,6 @@ class Room
      */
     private $name;
 
-    private $owner;
-
     /**
      * @Assert\Regex(
      *     pattern="/^\w{0,10}$/",
@@ -46,22 +44,6 @@ class Room
     public function setName($name)
     {
         $this->name = $name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * @param mixed $owner
-     */
-    public function setOwner($owner)
-    {
-        $this->owner = $owner;
     }
 
     /**

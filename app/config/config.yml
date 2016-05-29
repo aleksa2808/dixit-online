@@ -3,8 +3,6 @@ imports:
     - { resource: security.yml }
     - { resource: services.yml }
 
-# Put parameters here that don't need to change on each machine where the app is deployed
-# http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
 
@@ -27,6 +25,7 @@ framework:
     session:
         # handler_id set to null will use default session handler from php.ini
         handler_id:  snc_redis.session.handler
+        cookie_lifetime: 1800
     fragments:       ~
     http_method_override: true
 
@@ -72,11 +71,32 @@ assetic:
     filters:
         cssrewrite: ~
 
-# app/config/config.yml
+# FOSUser Configuration
 fos_user:
     db_driver: orm
     firewall_name: main
     user_class: AppBundle\Entity\User
+
+# EasyAdmin Configuration
+easy_admin:
+    entities:
+        User:
+            class: AppBundle\Entity\User
+            list:
+                fields:
+                    - username
+                    - email
+                    - enabled
+                    - lastLogin
+                    - locked
+                    - roles
+            form:
+                fields:
+                    - username
+                    - email
+                    - plainPassword
+                    - roles
+                    - enabled
 
 # Web Socket Configuration
 gos_web_socket:

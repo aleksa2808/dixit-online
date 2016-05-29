@@ -16,6 +16,9 @@
       <ul class="nav navbar-nav">
         <li><a href="#" data-toggle="modal" class="nav-item" data-target="#rulesModal">Rules</a></li>
         <li><a href="#" class="nav-item">About</a></li>
+          {% if is_granted("ROLE_ADMIN") %}
+              <li><a href="{{ path('easyadmin') }}" class="nav-item">Admin panel</a></li>
+          {% endif %}
       </ul>
 
       {#<p class="navbar-text navbar-right"><a href="#" data-toggle="modal" data-target="#loginModal">login</a> | <a href="#" data-toggle="modal" data-target="#registerModal">register</a></p>#}

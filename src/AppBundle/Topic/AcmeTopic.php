@@ -34,23 +34,26 @@ class AcmeTopic implements TopicInterface
      */
     public function onSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
-        //this will broadcast the message to ALL subscribers of this topic.
-        if ($this->redisClient->sismember('room:'.$request->getAttributes()->get('room').':members', $connection->Session->getId())){
+        $roomId = $request->getAttributes()->get('room');
+        $user = $this->clientManipulator->getClient($connection)->getUsername();
 
-            if (!$this->redisClient->sismember('room:'.$request->getAttributes()->get('room').':rmembers', $connection->Session->getId())){
+        if ($this->redisClient->zscore('rooms', $roomId)) {
+            if (!$this->redisClient->sismember('room:'.$roomId.':members', $user)) {
+                if ($this->redisClient->sismember('room:' . $roomId . ':lmembers', $user)) {
+                    $this->redisClient->sadd('room:' . $roomId . ':members', $user);
+                    $this->redisClient->srem('room:' . $roomId . ':lmembers', $user);
+                    $topic->broadcast(['msg' => $user . " has joined " . $this->redisClient->hget('room:' . $roomId, 'name')]);
+                }
 
-                $this->redisClient->sadd('room:'.$request->getAttributes()->get('room').':rmembers', $connection->Session->getId());
-                $topic->broadcast(['msg' => $connection->Session->get('name') . " has joined " . $this->redisClient->hget('room:'.$request->getAttributes()->get('room'), 'name')]); //$topic->getId()]);
-                $topic->broadcast(['msg' => $this->clientManipulator->getClient($connection) . " has joined " . $topic->getId()]);
-            }
-            else {
-                //todo: add increment ws protection
-
+                $topic->broadcast(array('type' => "members", 'members' => $this->redisClient->smembers('room:'.$roomId.':members')));
+            } else {
+                $connection->event($topic->getId(), ['msg' => 'Warning! Multiple game tabs are not allowed!']);
                 $connection->close();
             }
-        }else $connection->close();
-
-
+        } else {
+            $connection->event($topic->getId(), ['msg' => 'Warning! Game doesn\'t exist.']);
+            $connection->close();
+        }
     }
 
     /**
@@ -63,17 +66,37 @@ class AcmeTopic implements TopicInterface
      */
     public function onUnSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
-        //this will broadcast the message to ALL subscribers of this topic.
-        if ($this->redisClient->sismember('room:'.$request->getAttributes()->get('room').':rmembers', $connection->Session->getId())){
+        $roomId = $request->getAttributes()->get('room');
+        $user = $this->clientManipulator->getClient($connection)->getUsername();
 
-            //todo: add increment ws protection
-
-            $this->redisClient->srem('room:'.$request->getAttributes()->get('room').':rmembers', $connection->Session->getId());
-            $this->redisClient->srem('room:'.$request->getAttributes()->get('room').':members', $connection->Session->getId());
-            $topic->broadcast(['msg'=> $connection->resourceId."has left the room (channel\"" . $topic->getId() . "\")"]);
-
+        $userConnections = 0;
+        foreach ($topic as $client) {
+            if ($this->clientManipulator->getClient($client)->getUsername() == $user) {
+                $userConnections++;
+            }
         }
 
+        if ($userConnections == 1) {
+//            if ($this->redisClient->sismember('room:'.$roomId.':members', $user)) {
+
+                //todo: add increment ws protection
+
+                $this->redisClient->srem('room:' . $roomId . ':members', $user);
+
+                if (!$this->redisClient->scard('room:' . $roomId . ':members')) {
+                    // TODO: race condition fix
+                    // everybody left, remove the room
+                    $this->redisClient->zrem('rooms', $roomId);
+                    $this->redisClient->del('room:' . $roomId);
+                    $this->redisClient->del('room:' . $roomId . ':members');
+                    $this->redisClient->del('room:' . $roomId . ':lmembers');
+                } else {
+                    $this->redisClient->hset('room:'.$roomId, 'owner', $this->redisClient->srandmember('room:'.$roomId.':members'));
+                    $topic->broadcast(['msg' => $user . " has left " . $this->redisClient->hget('room:' . $roomId, 'name')]);
+                    $topic->broadcast(array('type' => "members", 'members' => $this->redisClient->smembers('room:' . $roomId . ':members')));
+                }
+//            }
+        }
     }
 
     /**
@@ -89,15 +112,7 @@ class AcmeTopic implements TopicInterface
      */
     public function onPublish(ConnectionInterface $connection, Topic $topic, WampRequest $request, $event, array $exclude, array $eligible)
     {
-        /*
-            $topic->getId() will contain the FULL requested uri, so you can proceed based on that
-
-            if ($topic->getId() == "acme/channel/shout")
-               //shout something to all subs.
-        */
-
-        echo "\n\n"." ".$connection->Session->getId();
-        $response = array('type' => "message", 'usr' => $connection->Session->getId(), 'msg' => $event['msg']);
+        $response = array('type' => "message", 'usr' => $this->clientManipulator->getClient($connection)->getUsername(), 'msg' => $event['msg']);
         $topic->broadcast($response);
     }
 
