@@ -1,5 +1,14 @@
 {% extends "FOSUserBundle::layout.html.twig" %}
 
 {% block fos_user_content %}
-{% include "FOSUserBundle:Registration:register_content.html.twig" %}
+	<div class="vertical-alignment-helper">
+  <div class="col-sm-6 vertical-align-center">
+	<div class="row" >
+		<h4 class="outline font modal-title " id="registerLabel">Register as a new user</h4>
+  </div>
+  <div class="row" >
+		{% include "FOSUserBundle:Registration:register_content.html.twig" %}
+  </div>
+  </div>
+	</div>
 {% endblock fos_user_content %}
