@@ -410,7 +410,7 @@
 	};
 	
 	Player.prototype.drawPlayer = function (canvas) {
-		var nameStyle = ["bold "+0.03*canvas.can.height+"px Arial", "italic "+0.03*canvas.can.height+"px Arial"];
+		var nameStyle = [""+0.03*canvas.can.height+"px boldFont", ""+0.03*canvas.can.height+"px italicFont"];
 		var w = this.x;
 		var h = this.y;
 		var imgW = 0.0649*canvas.can.width;

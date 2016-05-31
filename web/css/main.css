@@ -3,6 +3,7 @@ body {
   padding-bottom: 20px;
   background: #000 url(../img/back.jpg);
   background-size: cover;
+  font-family : bodyFont;
 }
 
 footer {
@@ -117,9 +118,38 @@ tr.selected td {
 	
 }
 
+@font-face {
+	font-weight: bold;
+    font-family: bodyFont;
+    src: url(../fonts/LibreBaskerville-Regular.ttf);
+	
+}
+
+@font-face {
+	font-weight: bold;
+    font-family: italicFont;
+    src: url(../fonts/LibreBaskerville-Italic.ttf);
+	
+}
+
+@font-face {
+	font-weight: bold;
+    font-family: boldFont;
+    src: url(../fonts/LibreBaskerville-Bold.ttf);
+	
+}
+
 .font {
 	font-family : newFont;
 	color: black;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family : boldFont;	
+}
+
+.nav-item {
+	font-size : 17px;
 }
 
 .outline {
@@ -130,7 +160,20 @@ tr.selected td {
     1.5px 1.5px #b6bdcd,
 	3.5px 3px #252b36;
 	color: #305583;
-
 }
 
+.transparent {
+	background-color: rgba(17,24,31,0.55);
+	border-color: rgba(236, 240, 241,0.65);
+	color: white;
+}
+
+#boja {
+	background-color: rgba(236, 240, 241,0.45);
+	border-color: rgba(236, 240, 241,0.45);
+}
+
+tbody tr:hover {
+	color: black;
+}
 

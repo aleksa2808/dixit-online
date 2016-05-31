@@ -6,14 +6,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-        <title>{% block title %}Dixit prototip{% endblock %}</title>
+        <title>{% block title %}Dixit online{% endblock %}</title>
 
         {% block stylesheets %}
             <!-- Bootstrap -->
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/flatly/bootstrap.min.css">
             <link rel="stylesheet" type="text/css" href="{{ asset('css/main.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
         {% endblock %}
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -45,8 +44,10 @@
                 {% block body %}{% endblock %}
 
                 {% block footer %}
-                    <footer>
-                        <p>&copy; 2016 le kljub, Inc.</p>
+                    <footer class="footer">
+						<div class="container text-center">
+							<p class="text-muted credit">&copy; 2016 le kljub, Inc.</p>	
+						</div>
                     </footer>
                 {% endblock %}
             </div>
