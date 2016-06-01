@@ -109,11 +109,39 @@ tr.selected td {
     background: #000 url(../img/dixit.jpg);
 }
 
+#sgame, #toggle1 {
+	font-size:50px;
+    background: #000 url(../img/dixit-blurred.jpg);
+	background-size:95%;
+	padding-bottom:10px;
+}
+
+#sgame a{
+	padding-bottom:10px;	
+}
+
+#sgame:hover {
+	color:#f39c12;
+}
+
+#toggle1:hover {
+	color:#18bc9c;
+}
+
+#leave, #smodal {
+	font-size:50px;
+    background: #000 url(../img/dixit-bw.jpg);
+	background-size:95%;
+}
+
+#leave:hover, #smodal:hover {
+	color:#e74c3c;
+}
 
 @font-face {
 	font-weight: bold;
     font-family: newFont;
-    src: url(../fonts/BlackwoodCastle.ttf);
+    src: url(../fonts/dilana.ttf);
 	
 }
 
@@ -153,12 +181,24 @@ h1, h2, h3, h4, h5, h6 {
 
 .outline {
 	text-shadow:
-	-1.5px -1.5px #b6bdcd,  
-	1.5px -1.5px #b6bdcd,
-	-1.5px 1.5px #b6bdcd,
-    1.5px 1.5px #b6bdcd,
-	3.5px 3px #252b36;
-	color: #305583;
+	-1.5px -1.5px #F2DCA6,  
+	1.5px -1.5px #F2DCA6,
+	-1.5px 1.5px #F2DCA6,
+    1.5px 1.5px #F2DCA6,
+	3.5px 3px #F2DCA6;
+	color: #413C45;
+}
+
+.nav-item {
+	font-size:30px;
+}
+
+.navbar-default .navbar-nav > li > a {
+	color: #413C45;
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+	color: #413C45;
 }
 
 .transparent, #txtar, #txtar1, #txtar2, #id1, #memberList{

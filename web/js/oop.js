@@ -68,7 +68,7 @@
 		$("#lobby").addClass('hidden');
 		canvas.canvasID('myCanvas');
 		canvas.setDiv("can");
-		canvas.setBgImage('/img/table.jpg');
+		//canvas.setBgImage('/img/table.jpg');
 		
 		submitted.setNum(6);
 		
@@ -342,8 +342,8 @@
 	};
 	
 	Cards.prototype.drawCards = function (canvas) {
-		this.startW = 0.12*canvas.can.width;
-		this.endW = 0.75*canvas.can.width;
+		this.startW = 0.09*canvas.can.width;
+		this.endW = 0.72*canvas.can.width;
 		this.startH = 0.75 * canvas.can.height;
 		var k = (this.endW - this.startW)/(6-1);
 		var w = this.startW;
@@ -410,7 +410,7 @@
 	};
 	
 	Player.prototype.drawPlayer = function (canvas) {
-		var nameStyle = [""+0.03*canvas.can.height+"px boldFont", ""+0.03*canvas.can.height+"px italicFont"];
+		var nameStyle = [""+0.03*canvas.can.height+"px bodyFont", ""+0.03*canvas.can.height+"px italicFont"];
 		var w = this.x;
 		var h = this.y;
 		var imgW = 0.0649*canvas.can.width;
@@ -418,7 +418,7 @@
 		
 		canvas.context.drawImage(this.avatar, w, h, imgW, imgH );
 		if (this.storyteller ) canvas.context.fillStyle = "blue";
-		else if (this.inGame) canvas.context.fillStyle = "black";
+		else if (this.inGame) canvas.context.fillStyle = "white";
 		else canvas.context.fillStyle = "red";
 		if (this.voted) canvas.context.fillStyle = "green";
 		canvas.context.font = nameStyle[0];
@@ -860,10 +860,11 @@
 	Submitted.prototype.drawDescription = function (canvas) {
 		//uzeti tekst
 		canvas.context.font = "bold "+0.07*canvas.can.height+"px newFont";
-		canvas.context.fillStyle = '#305583';
-		canvas.context.fillText("PLACE FOR DESCRIPTION", 0.25*canvas.can.width, 0.35*canvas.can.height);
-		canvas.context.strokeStyle ='#b6bdcd';
-		canvas.context.strokeText("PLACE FOR DESCRIPTION", 0.25*canvas.can.width, 0.35*canvas.can.height);
+		canvas.context.fillStyle = '#413C45';
+		canvas.context.fillText("place for description", 0.15*canvas.can.width, 0.3*canvas.can.height);
+		canvas.context.font = "bold "+0.071*canvas.can.height+"px newFont";
+		canvas.context.strokeStyle ='#F2DCA6';
+		canvas.context.strokeText("place for description", 0.15*canvas.can.width, 0.3*canvas.can.height);
 	}; 
 	
 	Submitted.prototype.drawVotes = function (canvas) {
