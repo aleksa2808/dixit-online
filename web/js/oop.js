@@ -89,6 +89,8 @@
 		players.setPlayer("Aleksa","/img/avatar4.png");
 		players.setPlayer("Ana","/img/avatar1.ico");
 		players.setPlayer("Tijana","/img/avatar2.png");
+		players.setStoryteller(1);
+		
 		
 			switch (state) {
 				case GameState.IDLE:
@@ -134,6 +136,7 @@
 		$('#choosing').removeClass('active');
 		$('#voting').removeClass('active');
 		$('#uncover').removeClass('active');
+		$('#watching').removeClass('active');
 	});
 	
 	$("#storyteller").click(function(){
@@ -144,6 +147,7 @@
 		$('#choosing').removeClass('active');
 		$('#voting').removeClass('active');
 		$('#uncover').removeClass('active');
+		$('#watching').removeClass('active');
 	});
 	
 	$("#choosing").click(function(){
@@ -154,6 +158,7 @@
 		$('#choosing').addClass('active');
 		$('#voting').removeClass('active');
 		$('#uncover').removeClass('active');
+		$('#watching').removeClass('active');
 	});
 	
 	$("#voting").click(function(){
@@ -164,6 +169,7 @@
 		$('#choosing').removeClass('active');
 		$('#voting').addClass('active');
 		$('#uncover').removeClass('active');
+		$('#watching').removeClass('active');
 	});
 	
 	$("#uncover").click(function(){
@@ -174,6 +180,18 @@
 		$('#choosing').removeClass('active');
 		$('#voting').removeClass('active');
 		$('#uncover').addClass('active');
+		$('#watching').removeClass('active');
+	});
+	
+	$("#watching").click(function(){
+		state=GameState.WATCHING;
+		game.loadWatching();
+		$('#idle').removeClass('active');
+		$('#storyteller').removeClass('active');
+		$('#choosing').removeClass('active');
+		$('#voting').removeClass('active');
+		$('#uncover').removeClass('active');
+		$('#watching').addClass('active');
 	});
 	
 /*--------------------------------------------------------- CANVAS CLASS ----------------------------------------------------------*/	
@@ -397,6 +415,10 @@
 	this.storyteller=true;
 	};
 	
+	Player.prototype.notStoryteller = function() {
+		this.storyteller = false;
+	};
+	
 	Player.prototype.justVoted = function () {
 		this.voted = true;
 	};
@@ -453,6 +475,13 @@
 	
 	Players.prototype.setHeight = function (h) {
 		this.startH = h;
+	};
+	
+	Players.prototype.setStoryteller = function (n) {
+		for (i=0; i<this.num; i++) {
+			if (i == n-1) this.player[i].isStoryteller();
+			else this.player[i].notStoryteller();
+		}
 	};
 	
 	Players.prototype.setPlayer = function (name, avatar) {
@@ -653,6 +682,10 @@
 				game.loadUncover();
 				break;
 				
+			case GameState.WATCHING:
+				game.loadWatching();
+				break;
+				
 			default:
 		} 
 	  
@@ -752,6 +785,10 @@
 				game.loadUncover();
 				break;
 				
+			case GameState.WATCHING:
+				game.loadWatching();
+				break;
+				
 			default:
 		}
 	};
@@ -828,6 +865,21 @@
 	  
 	  events.setEventListener();
 		
+	};
+	
+	Game.prototype.loadWatching = function () {
+		canvas.size();
+	    canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
+		
+	  players.drawPlayers(canvas);
+	  cards.drawCards(canvas);
+	  buttons.loadButtons(canvas);
+	  
+	  //nacrtaj submitted karte
+	  submitted.drawCards(canvas);
+	  submitted.drawDescription(canvas);
+	  
+	  events.setEventListener();
 	};
 }
 /*-------------------------------------------------------------------------------------------------------------------*/	
@@ -944,7 +996,8 @@
 		STORYTELLER:2, 
 		CHOOSING:3, 
 		VOTING:4, 
-		UNCOVER:5 
+		UNCOVER:5,
+		WATCHING:6
 		},
 	state = GameState.IDLE;	
 	}

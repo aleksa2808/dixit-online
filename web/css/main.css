@@ -262,3 +262,8 @@ thead {
 .bot {
 	padding-bottom:15px;
 }
+
+.list-group-item {
+	color:white;
+	background-color:transparent;
+}
