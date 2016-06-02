@@ -629,15 +629,13 @@
 					submitted.setSelected(3);
 					game.loadVoting();
 				}
-				else if (submitted.num == 5) {
+				else if (submitted.num >= 5) {
 					if (submitted.cards[4].mouseOn(canvas, mousePos.x, mousePos.y)) {
 						submitted.setSelected(4);
 						game.loadVoting();
 					}
-				}
-				else if (submitted.num == 6) {
-					if (submitted.cards[4].mouseOn(canvas, mousePos.x, mousePos.y)) {
-						submitted.setSelected(4);
+					else if (submitted.cards[5].mouseOn(canvas, mousePos.x, mousePos.y)) {
+						submitted.setSelected(5);
 						game.loadVoting();
 					}
 				}
@@ -738,6 +736,16 @@
 					game.loadVoting();
 					submitted.cards[3].zoom(canvas);
 					}
+				else if (submitted.num >= 5) {
+					if (submitted.cards[4].mouseOn(canvas, mousePos.x, mousePos.y)) {
+						game.loadVoting();
+						submitted.cards[4].zoom(canvas);
+					}
+					else if (submitted.cards[5].mouseOn(canvas, mousePos.x, mousePos.y)) {
+						game.loadVoting();
+						submitted.cards[5].zoom(canvas);
+					}
+				}
 				break;
 				
 			case GameState.UNCOVER:
@@ -842,8 +850,8 @@
 	};
 	
 	Submitted.prototype.drawCards = function (canvas) {
-		this.startW = 0.22*canvas.can.width;
-		this.endW = 0.85*canvas.can.width;
+		this.startW = 0.19*canvas.can.width;
+		this.endW = 0.82*canvas.can.width;
 		this.startH = 0.45 * canvas.can.height;
 		var k = (this.endW - this.startW)/(this.num-1);
 		var w = this.startW;
@@ -895,7 +903,7 @@
 	};
 	
 	Submitted.prototype.deselectAll = function () {
-		for (i=0; i<4; i++)  this.cards[i].deselect();;
+		for (i=0; i<this.num; i++)  this.cards[i].deselect();;
 	};
 	
 	Submitted.prototype.setSelected = function (num) {
@@ -906,7 +914,7 @@
 	};
 	
 	Submitted.prototype.isSelected = function () {
-		for (i=0; i<4; i++) 
+		for (i=0; i<this.num; i++) 
 			if (this.cards[i].selected) return true;
 		return false;	
 	};
