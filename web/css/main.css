@@ -109,7 +109,7 @@ tr.selected td {
     background: #000 url(../img/dixit.jpg);
 }
 
-#sgame, #toggle1 {
+#sgame, #toggle1, #edit1, #edit2 {
 	font-size:50px;
     background: #000 url(../img/dixit-blurred.jpg);
 	background-size:95%;
@@ -126,6 +126,14 @@ tr.selected td {
 
 #toggle1:hover {
 	color:#18bc9c;
+}
+
+#edit1:hover {
+	color:#2c3e50;
+}
+
+#edit2:hover {
+	color:#3498db;
 }
 
 #leave, #smodal {
@@ -267,3 +275,21 @@ thead {
 	color:white;
 	background-color:transparent;
 }
+
+#title, #link1, #link2 {
+	color:#F2DCA6; 
+	text-shadow: 1.5px 1.5px #413C45;
+}
+
+.big {
+	font-size:60px;
+}
+
+.bold {
+	font-family: boldFont;
+}
+
+.italic {
+	font-family: italicFont;
+}
+
