@@ -282,6 +282,15 @@
 		this.can.style.backgroundImage.height = this.can.height;
 	};
 	
+	Canvas.prototype.message = function () {
+		this.context.font = "bold "+0.07*this.can.height+"px newFont";
+		this.context.fillStyle = '#413C45';
+		this.context.fillText("Storyteller is picking a card, please wait.", 0.15*this.can.width, 0.3*this.can.height);
+		this.context.font = "bold "+0.071*this.can.height+"px newFont";
+		this.context.strokeStyle ='#F2DCA6';
+		this.context.strokeText("Storyteller is picking a card, please wait.", 0.15*this.can.width, 0.3*this.can.height);
+	};
+	
 	}
 /*-------------------------------------------------------------------------------------------------------------------*/		
 	
@@ -750,6 +759,10 @@
 				game.loadWatching();
 				break;
 				
+			case GameState.IDLE_CH:
+				game.loadIdle_ch();
+				break;
+				
 			default:
 		} 
 	  
@@ -853,6 +866,10 @@
 				game.loadWatching();
 				break;
 				
+			case GameState.IDLE_CH:
+				game.loadIdle_ch();
+				break;
+				
 			default:
 		}
 	};
@@ -942,6 +959,18 @@
 	  //nacrtaj submitted karte
 	  submitted.drawCards(canvas);
 	  submitted.drawDescription(canvas);
+	  
+	  events.setEventListener();
+	};
+	
+	Game.prototype.loadIdle_ch = function () {	
+	  canvas.size();
+	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
+	  canvas.message();
+	  
+	  players.drawPlayers(canvas);
+	  cards.drawCards(canvas);
+	  buttons.loadButtons(canvas);
 	  
 	  events.setEventListener();
 	};
@@ -1061,7 +1090,8 @@
 		CHOOSING:3, 
 		VOTING:4, 
 		UNCOVER:5,
-		WATCHING:6
+		WATCHING:6, 
+		IDLE_CH:7
 		},
 	state = GameState.IDLE;	
 	}
