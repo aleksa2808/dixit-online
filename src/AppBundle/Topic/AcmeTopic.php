@@ -2,6 +2,7 @@
 
 namespace AppBundle\Topic;
 
+use AppBundle\Game\GameLogic;
 use Gos\Bundle\WebSocketBundle\Topic\TopicInterface;
 use Predis\ClientInterface;
 use Ratchet\ConnectionInterface;
@@ -13,7 +14,7 @@ class AcmeTopic implements TopicInterface
 {
     protected $clientManipulator;
     protected $redisClient;
-
+    protected $game;
     /**
      * @param ClientManipulatorInterface $clientManipulator
      * @param ClientInterface $redis
@@ -22,6 +23,7 @@ class AcmeTopic implements TopicInterface
     {
         $this->clientManipulator = $clientManipulator;
         $this->redisClient = $redis;
+        $this->game= new GameLogic($redis);
     }
 
     /**
@@ -42,16 +44,16 @@ class AcmeTopic implements TopicInterface
                 if ($this->redisClient->sismember('room:' . $roomId . ':lmembers', $user)) {
                     $this->redisClient->sadd('room:' . $roomId . ':members', $user);
                     $this->redisClient->srem('room:' . $roomId . ':lmembers', $user);
-                    $topic->broadcast(['msg' => $user . " has joined " . $this->redisClient->hget('room:' . $roomId, 'name')]);
+                    $topic->broadcast(['type'=>'entexit', 'msg' => $user . " has joined " . $this->redisClient->hget('room:' . $roomId, 'name')]);
                 }
 
                 $topic->broadcast(array('type' => "members", 'members' => $this->redisClient->smembers('room:'.$roomId.':members')));
             } else {
-                $connection->event($topic->getId(), ['msg' => 'Warning! Multiple game tabs are not allowed!']);
+                $connection->event($topic->getId(), ['type'=>'entexit','msg' => 'Warning! Multiple game tabs are not allowed!']);
                 $connection->close();
             }
         } else {
-            $connection->event($topic->getId(), ['msg' => 'Warning! Game doesn\'t exist.']);
+            $connection->event($topic->getId(), ['type'=>'entexit', 'msg' => 'Warning! Game doesn\'t exist.']);
             $connection->close();
         }
     }
@@ -92,7 +94,7 @@ class AcmeTopic implements TopicInterface
                     $this->redisClient->del('room:' . $roomId . ':lmembers');
                 } else {
                     $this->redisClient->hset('room:'.$roomId, 'owner', $this->redisClient->srandmember('room:'.$roomId.':members'));
-                    $topic->broadcast(['msg' => $user . " has left " . $this->redisClient->hget('room:' . $roomId, 'name')]);
+                    $topic->broadcast(['type'=>'entexit' ,'msg' => $user . " has left " . $this->redisClient->hget('room:' . $roomId, 'name')]);
                     $topic->broadcast(array('type' => "members", 'members' => $this->redisClient->smembers('room:' . $roomId . ':members')));
                 }
 //            }
@@ -112,8 +114,34 @@ class AcmeTopic implements TopicInterface
      */
     public function onPublish(ConnectionInterface $connection, Topic $topic, WampRequest $request, $event, array $exclude, array $eligible)
     {
-        $response = array('type' => "message", 'usr' => $this->clientManipulator->getClient($connection)->getUsername(), 'msg' => $event['msg']);
-        $topic->broadcast($response);
+        $roomId = $request->getAttributes()->get('room');
+        if($event['type']=="message") {
+            $this->game->start('room:' . $request->getAttributes()->get('room'));
+            foreach ($this->redisClient->smembers('room:' . $roomId . ':members') as $usr) {
+
+                $user1 = $this->clientManipulator->findByUsername($topic, $usr);
+                $poruka = "your cards are:\n 1-" . $this->redisClient->zrange("room:" . $roomId . ":game:" . $usr . ":cards", 0, -1)[0];
+
+                $topic->broadcast(array('type' => "message", 'usr' => $this->clientManipulator->getClient($connection)->getUsername(), 'msg' => $poruka), array(), array($user1['connection']->WAMP->sessionId));
+
+
+            }
+
+
+        }
+        else if ($event['type']=="start" && $this->redisClient->hget("room:".$roomId, "owner")==$this->clientManipulator->getClient($connection)->getUsername()){
+            $this->game->start('room:' . $request->getAttributes()->get('room'));
+            $users=$this->redisClient->zrange('room:' . $roomId . ':game:members', 0, -1);
+            foreach ($this->redisClient->smembers('room:' . $roomId . ':members') as $username) {
+                $cardarr=$this->redisClient->zrange('room:' . $roomId . ':game:' . $username . ':cards', 0, -1);
+                $user2 = $this->clientManipulator->findByUsername($topic, $username);
+                $ind=$this->redisClient->get('room:'.$roomId.':game:st:index');
+                if ($username===$this->redisClient->zrange('room:'.$roomId.':game:members', $ind , $ind )[0])
+                    $topic->broadcast(['type' => "startst", 'cards'=>$cardarr, 'users'=>$users, 'stindex'=>$ind], [], [$user2['connection']->WAMP->sessionId]);
+                else
+                    $topic->broadcast(['type' => "start", 'cards'=>$cardarr, 'users'=>$users, 'stindex'=>$ind], [], [$user2['connection']->WAMP->sessionId]);
+            }
+        }
     }
 
     /**

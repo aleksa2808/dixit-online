@@ -194,21 +194,26 @@
 
                 var text = "";
 
-                if (payload.type === "message") {
-                    text = payload.usr + ": " + payload.msg;
-                } else if (payload.type === "members") {
-					var memberList = $('#memberList');
-                    memberList.empty();
-                    payload.members.forEach(function(member) {
-                        memberList.append('<li class="list-group-item">' + member + '</li>');
-                    });
+				var chat=$('.chatTextArea');
 
-                    return;
-				} else {
-                    text = payload.msg;
-                }
-                var chat = $('.chatTextArea');
-                chat.val(chat.val() + text + "\n");
+				if (payload.type === "message") {
+					text = payload.usr + ": " + payload.msg;
+					chat.val(chat.val() + text + "\n");
+				} else if (payload.type === "members") {
+					var memberList = $('#memberList');
+					memberList.empty();
+					payload.members.forEach(function(member) {
+						memberList.append('<li class="list-group-item">' + member + '</li>');
+					});
+				} else if (payload.type==="entexit"){
+					text = payload.msg;
+					chat.val(chat.val() + text + "\n");
+				} else if(payload.type==="start") {
+					startGame(payload.cards, payload.users, payload.stindex+1);
+				} else if(payload.type==="startst"){
+					startGameSt(payload.cards, payload.users, payload.stindex+1);
+				}
+
             });
         });
 
@@ -223,27 +228,33 @@
         });
 
 
+		$("#sgame").click(function(e){
+			e.preventDefault();
+			if (null !== ses) ses.publish("acme/"+{{ room }}, {type:"start"});
+		});
+
+
         $(document).ready(function() {
             $('.chatTextArea').val("");
 
             $('#sendButtonLobby').click(function(e) {
                 e.preventDefault();
                 var inputText = $("#inputTextLobby");
-                if (null !== ses && inputText.val() !== "") ses.publish("acme/"+{{ room }}, {msg: inputText.val()});
+                if (null !== ses && inputText.val() !== "") ses.publish("acme/"+{{ room }}, {msg: inputText.val(), type:"message"});
                 inputText.val("");
             });
 
             $('#sendButtonGame').click(function(e) {
                 e.preventDefault();
                 var inputText = $("#inputTextGame");
-                if (null !== ses && inputText.val() !== "") ses.publish("acme/"+{{ room }}, {msg: inputText.val()});
+                if (null !== ses && inputText.val() !== "") ses.publish("acme/"+{{ room }}, {msg: inputText.val(), type:"message"});
                 inputText.val("");
             });
 
             $('#sendButtonResults').click(function(e) {
                 e.preventDefault();
                 var inputText = $("#inputTextResults");
-                if (null !== ses && inputText.val() !== "") ses.publish("acme/"+{{ room }}, {msg: inputText.val()});
+                if (null !== ses && inputText.val() !== "") ses.publish("acme/"+{{ room }}, {msg: inputText.val(), type:"message"});
                 inputText.val("");
             });
         });

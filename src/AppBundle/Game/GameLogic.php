@@ -24,14 +24,14 @@ class GameLogic
         if ($this->redisClient->setnx($room.':game:state', "1" )// && $this->redisClient->scard($room.':members')>=4){
         ){
             //init card deck
-            for ($i=1; $i<=118; $i++)
+            for ($i=1; $i<=107; $i++)
                 $this->redisClient->sadd($room.':game:cards',array($i));
 
 
             // st = storyteller
 
             // picking random storyteller
-            $this->redisClient->set($room.":game:st:index", rand(1, $this->redisClient->scard($room.':members')));
+            $this->redisClient->set($room.":game:st:index", rand(0, $this->redisClient->scard($room.':members')-1));
             $this->redisClient->set($room.":game:st:card", 0);
             $this->redisClient->set($room.":game:st:phrase", "n/a");
 

@@ -61,37 +61,41 @@
 		$("#lobby").addClass('hidden');
 		
 	});	
-	
-	$("#sgame").click(function(){
+
+	//*************************************************
+	function startGame(cardArr, userArr, stindex){
 		$("#game").removeClass('hidden');
 		$("#results").addClass('hidden');
 		$("#lobby").addClass('hidden');
 		canvas.canvasID('myCanvas');
 		canvas.setDiv("can");
 		//canvas.setBgImage('/img/table.jpg');
-		
-		submitted.setNum(6);
-		
-		for (i=1; i<7; i++)
-			submitted.setCard(i,"/img/00"+i+".png");
-		
-		for (i=1; i<7; i++) {
-			cards.setCard(i,"/img/00"+i+".png");
+
+		submitted.setNum(userArr.length);
+
+		for (i=0; i<6; i++){
+			if (cardArr[i]<10) cardArr[i]="/img/00"+cardArr[i]+".png";
+			else if (cardArr[i]>=10 && cardArr[i]<100) cardArr[i]="/img/0"+cardArr[i]+".png";
+			else cardArr[i]="/img/"+cardArr[i]+".png";
+
 		}
-		
-		
-		
-		players.setNum(6);
-		
-		players.setPlayer("Ana","/img/avatar1.ico");
-		players.setPlayer("Tijana","/img/avatar2.png");
-		players.setPlayer("Dusan","/img/avatar3.png");
-		players.setPlayer("Aleksa","/img/avatar4.png");
-		players.setPlayer("Ana","/img/avatar1.ico");
-		players.setPlayer("Tijana","/img/avatar2.png");
-		players.setStoryteller(1);
-		
-		
+	//	for (i=1; i<7; i++)
+	//		submitted.setCard(i,cardArr[i-1]);
+
+		for (i=1; i<7; i++) {
+			cards.setCard(i,cardArr[i-1]);
+		}
+		players.setNum(userArr.length);
+
+		if (userArr.length >= 1)players.setPlayer(userArr[0],"/img/avatar1.ico");
+		if (userArr.length >= 2)players.setPlayer(userArr[1],"/img/avatar2.png");
+		if (userArr.length >= 3)players.setPlayer(userArr[2],"/img/avatar3.png");
+		if (userArr.length >= 4)players.setPlayer(userArr[3],"/img/avatar4.png");
+		if (userArr.length >= 5)players.setPlayer(userArr[4],"/img/avatar1.ico");
+		if (userArr.length >= 6)players.setPlayer(userArr[5],"/img/avatar2.png");
+
+		players.setStoryteller(stindex);
+		state=GameState.IDLE;
 			switch (state) {
 				case GameState.IDLE:
 					game.loadIdle();
@@ -110,12 +114,72 @@
 					break;
 				default:
 			}
-		
+
 		//
 		//system.load();
 		
-	}); 
-	
+	}
+
+
+	//****************************************************
+	function startGameSt(cardArr, userArr, stindex){
+		$("#game").removeClass('hidden');
+		$("#results").addClass('hidden');
+		$("#lobby").addClass('hidden');
+		canvas.canvasID('myCanvas');
+		canvas.setDiv("can");
+		//canvas.setBgImage('/img/table.jpg');
+
+		submitted.setNum(userArr.length);
+
+		for (i=0; i<6; i++){
+			if (cardArr[i]<10) cardArr[i]="/img/00"+cardArr[i]+".png";
+			else if (cardArr[i]>=10 && cardArr[i]<100) cardArr[i]="/img/0"+cardArr[i]+".png";
+			else cardArr[i]="/img/"+cardArr[i]+".png";
+
+		}
+		//	for (i=1; i<7; i++)
+		//		submitted.setCard(i,cardArr[i-1]);
+
+		for (i=1; i<7; i++) {
+			cards.setCard(i,cardArr[i-1]);
+		}
+
+		players.setNum(userArr.length);
+
+		if (userArr.length >= 1)players.setPlayer(userArr[0],"/img/avatar1.ico");
+		if (userArr.length >= 2)players.setPlayer(userArr[1],"/img/avatar2.png");
+		if (userArr.length >= 3)players.setPlayer(userArr[2],"/img/avatar3.png");
+		if (userArr.length >= 4)players.setPlayer(userArr[3],"/img/avatar4.png");
+		if (userArr.length >= 5)players.setPlayer(userArr[4],"/img/avatar1.ico");
+		if (userArr.length >= 6)players.setPlayer(userArr[5],"/img/avatar2.png");
+
+		players.setStoryteller(stindex);
+		state=GameState.STORYTELLER;
+		switch (state) {
+			case GameState.IDLE:
+				game.loadIdle();
+				break;
+			case GameState.STORYTELLER:
+				game.loadStoryteller();
+				break;
+			case GameState.CHOOSING:
+				game.loadChoosing();
+				break;
+			case GameState.VOTING:
+				game.loadVoting();
+				break;
+			case GameState.UNCOVER:
+				game.loadUncover();
+				break;
+			default:
+		}
+
+		//
+		//system.load();
+
+	}
+
 	$("#slobby").click(function(){
 		$("#lobby").removeClass('hidden');
 		$("#results").addClass('hidden');
