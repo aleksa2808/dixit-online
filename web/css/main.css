@@ -109,6 +109,10 @@ tr.selected td {
     background: #000 url(../img/dixit.jpg);
 }
 
+#btn-create:hover {
+	color:#b11c10;
+}
+
 #sgame, #toggle1, #edit1, #edit2 {
 	font-size:50px;
     background: #000 url(../img/dixit-blurred.jpg);
