@@ -6,11 +6,11 @@
 
 
 
-<div class="jumbotron" style="background-repeat: no-repeat; background-position: 50% 75%; height: 512px; max-height: 720px;">
+<div class="jumbotron">
         <div class="container">
 		
-            <h1 class="font outline">Welcome!</h1>
-            <p style="color:#6f86ac; text-shadow: 1.5px 1.5px #3c6853;">Step into the role of a mysterious storyteller as you slowly uncover the magical world of DiXit!</p>
+            <h1 class="font outline">Welcome to DiXit!</h1>
+            <p id="title">Step into the role of a mysterious storyteller as you slowly uncover the magical world of DiXit!</p>
             <div class="row">
 				<div class="well">
 				<form action="{{ path("fos_user_security_check") }}" method="post" role="form" class="form-inline">
@@ -26,7 +26,7 @@
 					<div class="pull-down">
 						<div class="checkbox">
 						<label class="form-group" for="remember_me"><input type="checkbox" id="remember_me" name="_remember_me" value="on" />{{ 'security.login.remember_me'|trans }}</label>	
-						<a href="#"><br>Forgot password?</a>
+						<a id="link1" href="{{ path('fos_user_resetting_request') }}"><br>Forgot password?</a>
 					</div>
 					</div>
 				</div>
@@ -37,10 +37,10 @@
 				</form>
 					<div class="col-xs-12">
 					{% if error %}
-    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    <div class="error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 {% endif %}
 						<div class="pull-right">
-							<h5>Don't have an account? <a href="/register/">Register</a></h5>
+							<h5>Don't have an account? <a id="link2" href="/register/">Register</a></h5>
 						</div>
 					</div>
 				</div>
@@ -48,5 +48,6 @@
         </div>
     </div>
 {% endblock fos_user_content %}
+
 
 
