@@ -27,6 +27,13 @@ footer {
 	opacity:0.55;
 }
 
+.jumbotron {
+	background-repeat: no-repeat; 
+	background-position: 50% 75%; 
+	height: 512px; 
+	max-height: 720px;
+}
+
 tr.selected td {
     background: none repeat scroll 0 0 #00C957;
     color: #000000;
