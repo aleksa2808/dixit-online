@@ -240,6 +240,7 @@
 		this.context.font = "bold "+0.071*this.can.height+"px newFont";
 		this.context.strokeStyle ='#F2DCA6';
 		this.context.strokeText(msg, 0.15*this.can.width, 0.3*this.can.height);
+		this.context.stroke();
 	};
 	
 	}
@@ -852,8 +853,8 @@
 	Game.prototype.loadIdle = function () {	
 	  canvas.size();
 	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
+		canvas.message("Storyteller's turn");
 
-		cards.card.submitted=6;
 		players.drawPlayers(canvas);
 	  cards.drawCards(canvas);
 	  buttons.loadButtons(canvas);
@@ -864,9 +865,7 @@
 	Game.prototype.loadStoryteller = function () {
 	  canvas.size();
 	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
-
-		cards.card.submitted=6;
-
+		canvas.message("You're the storyteller!");
 		players.drawPlayers(canvas);
 	  cards.drawCards(canvas);
 	  buttons.loadButtons(canvas);
@@ -1005,6 +1004,7 @@
 					canvas.context.arc(start, this.cards[j].y-5, radius, 0, 2 * Math.PI, false);
 					//boja treba da bude boja onog igraca koji je glasao za tu kartu
 					canvas.context.fillStyle = players.player[i].color;
+					canvas.context.strokeStyle = players.player[i].color;
 					canvas.context.fill();
 					canvas.context.closePath();
 					canvas.context.stroke();
