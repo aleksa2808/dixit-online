@@ -155,7 +155,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-primary" id="submitSt" data-dismiss="modal">Submit</button>
                 </div>
             </div>
         </div>
@@ -187,8 +187,9 @@
         var ses = null;
 
         websocket.on("socket/connect", function(session){
+			roomNum={{ room }};
             ses = session;
-
+			sess = ses;
             session.subscribe("acme/"+{{ room }}, function(uri, payload){
                 console.log("Received message", payload);
 
@@ -209,11 +210,73 @@
 					text = payload.msg;
 					chat.val(chat.val() + text + "\n");
 				} else if(payload.type==="start") {
+					state=GameState.IDLE;
 					startGame(payload.cards, payload.users, payload.stindex+1);
 				} else if(payload.type==="startst"){
-					startGameSt(payload.cards, payload.users, payload.stindex+1);
-				}
+					state=GameState.STORYTELLER;
+					startGame(payload.cards, payload.users, payload.stindex+1);
+				}else if (payload.type==="choosingst"){
+					state=GameState.IDLE_CH;
+					phrase = payload.phrase;
+					game.loadIdle_ch();
+				}else if (payload.type==="choosing"){
+					state=GameState.CHOOSING;
+					phrase = payload.phrase;
+					game.loadChoosing();
+				}else if (payload.type==="voting"){
+					state=GameState.VOTING;
+					setDeck(payload.subCards);
+					game.loadVoting();
+				}else if (payload.type==="watching") {
+					state = GameState.WATCHING;
+					setDeck(payload.subCards);
+					game.loadWatching();
 
+				}else if (payload.type==="newrSt"){
+					voterArr = payload.voterArr;
+					ownerArr = payload.ownerArr;
+
+					players.setStoryteller(payload.stind);
+					img=payload.missingcard;
+					if (img<10) img="/img/00"+img+".png";
+					else if (img>=10 && img<100) img="/img/0"+img+".png";
+					else img="/img/"+img+".png";
+					cards.setCard(parseInt(payload.missingind)+1, img);
+
+					plarr=players.player;
+					for (i=0; i<plarr.length;i++){
+						plarr[i].setPoints(payload.resultArr[i]);
+
+					}
+					state=GameState.UNCOVER;
+					game.loadUncover();
+					setTimeout(function(){
+						setState(GameState.STORYTELLER);
+						game.loadStoryteller();
+					}, 5000);
+
+				}else if(payload.type==="newr"){
+					voterArr = payload.voterArr;
+					ownerArr = payload.ownerArr;
+					players.setStoryteller(payload.stind);
+					img=payload.missingcard;
+					if (img<10) img="/img/00"+img+".png";
+					else if (img>=10 && img<100) img="/img/0"+img+".png";
+					else img="/img/"+img+".png";
+					cards.setCard((parseInt(payload.missingind)+1), img);
+
+					plarr=players.player;
+					for (i=0; i<plarr.length;i++){
+						plarr[i].setPoints(payload.resultArr[i]);
+
+					}
+					state=GameState.UNCOVER;
+					game.loadUncover();
+					setTimeout(function(){
+						setState(GameState.IDLE);
+						game.loadIdle();
+					}, 5000);
+				}
             });
         });
 
@@ -233,6 +296,12 @@
 			if (null !== ses) ses.publish("acme/"+{{ room }}, {type:"start"});
 		});
 
+		$("#submitSt").click(function(e){
+			e.preventDefault();
+			var phr=$("#recipient-name");
+			if (null!== ses) ses.publish("acme/"+{{ room }}, {type:"submitSt", phrase:phr.val(), sel: cards.getSelected()});
+
+		});
 
         $(document).ready(function() {
             $('.chatTextArea').val("");

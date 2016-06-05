@@ -23,7 +23,9 @@
 		
 	};**/
 	
-	
+	function setState(st){
+		state=st;
+	}
 	
 	window.onresize = function () {
 			switch (state) {
@@ -95,7 +97,7 @@
 		if (userArr.length >= 6)players.setPlayer(userArr[5],"/img/avatar2.png");
 
 		players.setStoryteller(stindex);
-		state=GameState.IDLE;
+
 			switch (state) {
 				case GameState.IDLE:
 					game.loadIdle();
@@ -119,66 +121,7 @@
 		//system.load();
 		
 	}
-
-
-	//****************************************************
-	function startGameSt(cardArr, userArr, stindex){
-		$("#game").removeClass('hidden');
-		$("#results").addClass('hidden');
-		$("#lobby").addClass('hidden');
-		canvas.canvasID('myCanvas');
-		canvas.setDiv("can");
-		//canvas.setBgImage('/img/table.jpg');
-
-		submitted.setNum(userArr.length);
-
-		for (i=0; i<6; i++){
-			if (cardArr[i]<10) cardArr[i]="/img/00"+cardArr[i]+".png";
-			else if (cardArr[i]>=10 && cardArr[i]<100) cardArr[i]="/img/0"+cardArr[i]+".png";
-			else cardArr[i]="/img/"+cardArr[i]+".png";
-
-		}
-		//	for (i=1; i<7; i++)
-		//		submitted.setCard(i,cardArr[i-1]);
-
-		for (i=1; i<7; i++) {
-			cards.setCard(i,cardArr[i-1]);
-		}
-
-		players.setNum(userArr.length);
-
-		if (userArr.length >= 1)players.setPlayer(userArr[0],"/img/avatar1.ico");
-		if (userArr.length >= 2)players.setPlayer(userArr[1],"/img/avatar2.png");
-		if (userArr.length >= 3)players.setPlayer(userArr[2],"/img/avatar3.png");
-		if (userArr.length >= 4)players.setPlayer(userArr[3],"/img/avatar4.png");
-		if (userArr.length >= 5)players.setPlayer(userArr[4],"/img/avatar1.ico");
-		if (userArr.length >= 6)players.setPlayer(userArr[5],"/img/avatar2.png");
-
-		players.setStoryteller(stindex);
-		state=GameState.STORYTELLER;
-		switch (state) {
-			case GameState.IDLE:
-				game.loadIdle();
-				break;
-			case GameState.STORYTELLER:
-				game.loadStoryteller();
-				break;
-			case GameState.CHOOSING:
-				game.loadChoosing();
-				break;
-			case GameState.VOTING:
-				game.loadVoting();
-				break;
-			case GameState.UNCOVER:
-				game.loadUncover();
-				break;
-			default:
-		}
-
-		//
-		//system.load();
-
-	}
+	
 
 	$("#slobby").click(function(){
 		$("#lobby").removeClass('hidden');
@@ -257,7 +200,15 @@
 		$('#uncover').removeClass('active');
 		$('#watching').addClass('active');
 	});
-	
+
+	function setDeck(cardArr){
+		for (i=0; i<cardArr.length; i++) {
+			if (cardArr[i]<10) cardArr[i]="/img/00"+cardArr[i]+".png";
+			else if (cardArr[i]>=10 && cardArr[i]<100) cardArr[i]="/img/0"+cardArr[i]+".png";
+			else cardArr[i]="/img/"+cardArr[i]+".png";
+			submitted.setCard(i + 1,cardArr[i]);
+		}
+	};
 /*--------------------------------------------------------- CANVAS CLASS ----------------------------------------------------------*/	
 	{
 	var Canvas = function ( ) {};
@@ -282,13 +233,13 @@
 		this.can.style.backgroundImage.height = this.can.height;
 	};
 	
-	Canvas.prototype.message = function () {
-		this.context.font = "bold "+0.07*this.can.height+"px newFont";
-		this.context.fillStyle = '#413C45';
-		this.context.fillText("Storyteller is picking a card, please wait.", 0.15*this.can.width, 0.3*this.can.height);
+	Canvas.prototype.message = function (msg) {
+		//this.context.font = "bold "+0.07*this.can.height+"px newFont";
+		//this.context.fillStyle = '#413C45';
+		//this.context.fillText(msg, 0.15*this.can.width, 0.3*this.can.height);
 		this.context.font = "bold "+0.071*this.can.height+"px newFont";
 		this.context.strokeStyle ='#F2DCA6';
-		this.context.strokeText("Storyteller is picking a card, please wait.", 0.15*this.can.width, 0.3*this.can.height);
+		this.context.strokeText(msg, 0.15*this.can.width, 0.3*this.can.height);
 	};
 	
 	}
@@ -351,7 +302,8 @@
 		else return false;
 	};
 
-	Card.prototype.drawRectangle = function (canvas, scale) {
+	Card.prototype.drawRectangle = function (canvas, scale, color) {
+		if (color==undefined) color="green"
 		this.z = 0.13*canvas.can.height;
 		this.w = 0.1*canvas.can.width;
 		this.h = 0.2244*canvas.can.height;
@@ -359,7 +311,7 @@
 		this.hz = 0.35*canvas.can.height;
 		canvas.context.beginPath();
 		canvas.context.lineWidth = "8";
-		canvas.context.strokeStyle = "green";
+		canvas.context.strokeStyle = color;
 		if (scale==3)
 		canvas.context.rect(this.x, this.y, (this.w), (this.h));
 		else 
@@ -377,6 +329,7 @@
 		this.startW;
 		this.endW;
 		this.startH;
+		
 		
 		
 		this.card = new Array();
@@ -397,7 +350,7 @@
 	};
 	
 	Cards.prototype.setCard = function (num,img) {
-	this.card[num-1].setCard(img);
+		this.card[num-1].setCard(img);
 	};
 	
 	Cards.prototype.setWidth = function (w) {
@@ -418,7 +371,11 @@
 	this.card[num].select();
 	this.selected=num;
 	};
-	
+
+	Cards.prototype.getSelected = function (){
+		return this.selected;
+	};
+		
 	Cards.prototype.isSelected = function () {
 		for (i=0; i<6; i++) 
 			if (this.card[i].selected) return true;
@@ -465,7 +422,6 @@
 		this.voted = false;
 		this.x;
 		this.y;
-		
 	};
 	
 	Player.prototype.setX = function (x) {
@@ -501,8 +457,12 @@
 	};
 	
 	Player.prototype.addPoints = function(pts) {
-	this.points += pts;
+		this.points += pts;
 	};
+		
+	Player.prototype.setPoints = function(pts){
+		this.points = pts;
+	}	
 	
 	Player.prototype.drawPlayer = function (canvas) {
 		var nameStyle = [""+0.03*canvas.can.height+"px bodyFont", ""+0.03*canvas.can.height+"px italicFont"];
@@ -513,7 +473,7 @@
 		
 		canvas.context.drawImage(this.avatar, w, h, imgW, imgH );
 		if (this.storyteller ) canvas.context.fillStyle = "blue";
-		else if (this.inGame) canvas.context.fillStyle = "white";
+		else if (this.inGame) canvas.context.fillStyle = this.color;
 		else canvas.context.fillStyle = "red";
 		if (this.voted) canvas.context.fillStyle = "green";
 		canvas.context.font = nameStyle[0];
@@ -521,6 +481,10 @@
 		canvas.context.font = nameStyle[1];
 		canvas.context.fillText (""+this.points+" points", (this.x), (this.y+imgH+0.06*canvas.can.height));
 	}
+
+		Player.prototype.setColor = function(i){
+			this.color=colors[i];
+		}
 	}
 /*-------------------------------------------------------------------------------------------------------------------*/	
 	
@@ -574,6 +538,7 @@
 		var w = this.startW;
 		
 		for (i=0; i<this.num; i++) {
+			this.player[i].setColor(i);
 			this.player[i].setX(w);
 			this.player[i].setY(this.startH);
 			this.player[i].drawPlayer(canvas);
@@ -675,9 +640,9 @@
 				}
 				if (buttons.mouseOn(canvas, mousePos.x, mousePos.y)) {
 					if (cards.isSelected()) {
-						cards.setSubmitted();
+						//cards.setSubmitted();
 						$('#addDescriptionModal').modal('show');
-						cards.deselectAll();
+						//cards.deselectAll();
 					}
 				}
 				break;
@@ -709,7 +674,10 @@
 				}
 				if (buttons.mouseOn(canvas, mousePos.x, mousePos.y)) {
 					if (cards.isSelected()) {
+						sess.publish("acme/"+roomNum, {type:"submit", sel: cards.getSelected()});
 						cards.deselectAll();
+						state=GameState.IDLE_CH;
+						game.loadIdle_ch();
 					}
 				}
 				break;
@@ -723,11 +691,11 @@
 					submitted.setSelected(1);
 					game.loadVoting();
 				}
-				else if (submitted.cards[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
+				else if (submitted.num >=3 && submitted.cards[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
 					submitted.setSelected(2);
 					game.loadVoting();
 				}
-				else if (submitted.cards[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
+				else if (submitted.num >=4 && submitted.cards[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
 					submitted.setSelected(3);
 					game.loadVoting();
 				}
@@ -743,15 +711,15 @@
 				}
 				if (buttons.mouseOn(canvas, mousePos.x, mousePos.y)) {
 					if (submitted.isSelected()) {
+						sess.publish("acme/"+roomNum, {type:"vote", sel: submitted.getSelected()});
 						submitted.deselectAll();
+						state=GameState.WATCHING;
+						game.loadWatching();
 					}
 				}
 				break;
 				
 			case GameState.UNCOVER:
-				if (cards.back.mouseOn(canvas, mousePos.x, mousePos.y)) {
-						cards.setCard(cards.submitted, "/img/015.png");
-					}
 				game.loadUncover();
 				break;
 				
@@ -838,11 +806,11 @@
 					game.loadVoting();
 					submitted.cards[1].zoom(canvas);
 					}
-				else if (submitted.cards[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
+				else if (submitted.num >=3 && submitted.cards[2].mouseOn(canvas, mousePos.x, mousePos.y)) {
 					game.loadVoting();
 					submitted.cards[2].zoom(canvas);
 					}
-				else if (submitted.cards[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
+				else if (submitted.num >=4 && submitted.cards[3].mouseOn(canvas, mousePos.x, mousePos.y)) {
 					game.loadVoting();
 					submitted.cards[3].zoom(canvas);
 					}
@@ -883,8 +851,9 @@
 	Game.prototype.loadIdle = function () {	
 	  canvas.size();
 	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
-	  
-	  players.drawPlayers(canvas);
+
+		cards.card.submitted=6;
+		players.drawPlayers(canvas);
 	  cards.drawCards(canvas);
 	  buttons.loadButtons(canvas);
 	  
@@ -894,7 +863,10 @@
 	Game.prototype.loadStoryteller = function () {
 	  canvas.size();
 	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
-	  players.drawPlayers(canvas);
+
+		cards.card.submitted=6;
+
+		players.drawPlayers(canvas);
 	  cards.drawCards(canvas);
 	  buttons.loadButtons(canvas);
 	  
@@ -966,12 +938,12 @@
 	Game.prototype.loadIdle_ch = function () {	
 	  canvas.size();
 	  canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
-	  canvas.message();
+	  canvas.message("Players are picking cards");
 	  
 	  players.drawPlayers(canvas);
 	  cards.drawCards(canvas);
 	  buttons.loadButtons(canvas);
-	  
+
 	  events.setEventListener();
 	};
 }
@@ -1013,27 +985,30 @@
 	Submitted.prototype.drawDescription = function (canvas) {
 		//uzeti tekst
 		canvas.context.font = "bold "+0.07*canvas.can.height+"px newFont";
-		canvas.context.fillStyle = '#413C45';
-		canvas.context.fillText("place for description", 0.15*canvas.can.width, 0.3*canvas.can.height);
-		canvas.context.font = "bold "+0.071*canvas.can.height+"px newFont";
-		canvas.context.strokeStyle ='#F2DCA6';
-		canvas.context.strokeText("place for description", 0.15*canvas.can.width, 0.3*canvas.can.height);
+		canvas.context.fillStyle = '#F2DCA6';
+		canvas.context.fillText(phrase, 0.15*canvas.can.width, 0.3*canvas.can.height);
+		//canvas.context.font = "bold "+0.071*canvas.can.height+"px newFont";
+		//canvas.context.strokeStyle ='#F2DCA6';
+		//canvas.context.strokeText(phrase, 0.15*canvas.can.width, 0.3*canvas.can.height);
 	}; 
 	
 	Submitted.prototype.drawVotes = function (canvas) {
 		for (j=0; j<this.num; j++) {  //za karte
+			this.cards[j].drawRectangle(canvas,3,colors[ownerArr[j]]);
 			var k = (this.cards[j].w)/(5);
 			var radius = 0.3*k;
 			var start = this.cards[j].x + radius/2;
 			for (i=0; i<this.num; i++) { //za igrace
-			canvas.context.beginPath();
-			canvas.context.arc(start, this.cards[j].y-5, radius, 0, 2 * Math.PI, false);
-			//boja treba da bude boja onog igraca koji je glasao za tu kartu
-			canvas.context.fillStyle = 'black';
-			canvas.context.fill();
-			canvas.context.stroke();
-			start+=k;
-		}
+				if(j==voterArr[i]){
+					canvas.context.beginPath();
+					canvas.context.arc(start, this.cards[j].y-5, radius, 0, 2 * Math.PI, false);
+					//boja treba da bude boja onog igraca koji je glasao za tu kartu
+					canvas.context.fillStyle = players.player[i].color;
+					canvas.context.fill();
+					canvas.context.stroke();
+					start+=k;
+				}
+			}
 		
 		}
 	};
@@ -1043,12 +1018,10 @@
 		this.drawDescription(canvas);
 		//this.drawRectangle(canvas);
 		this.drawVotes(canvas);
-		
-		canvas.context.drawImage(this.back,(canvas.can.width*0.03), (canvas.can.height*0.5), (this.card[0].card.width/(5.5)), (this.card[0].card.height/(5.5)));
 	};
 	
 	Submitted.prototype.deselectAll = function () {
-		for (i=0; i<this.num; i++)  this.cards[i].deselect();;
+		for (i=0; i<this.num; i++)  this.cards[i].deselect();
 	};
 	
 	Submitted.prototype.setSelected = function (num) {
@@ -1062,6 +1035,10 @@
 		for (i=0; i<this.num; i++) 
 			if (this.cards[i].selected) return true;
 		return false;	
+	};
+
+	Submitted.prototype.getSelected = function(){
+		return this.selected;
 	};
 	
 	Submitted.prototype.setSubmitted = function() {
@@ -1084,6 +1061,11 @@
 	system = new System(),
 	submitted = new Submitted(),
 	game = new Game(),
+	phrase = "",
+	sess,
+	roomNum,
+	voterArr,
+	ownerArr,	
 	GameState = {
 		IDLE:1, 
 		STORYTELLER:2, 
@@ -1093,6 +1075,15 @@
 		WATCHING:6, 
 		IDLE_CH:7
 		},
-	state = GameState.IDLE;	
+	state = GameState.IDLE,
+	colors = [
+		"#8fb118",
+		"#b992e4",
+		"#e69b33",
+		"#41c594",
+		"#e2e6dd",
+		"#ecdd20"
+
+	]
 	}
 /*-------------------------------------------------------------------------------------------------------------------*/	

@@ -116,19 +116,9 @@ class AcmeTopic implements TopicInterface
     {
         $roomId = $request->getAttributes()->get('room');
         if($event['type']=="message") {
-            $this->game->start('room:' . $request->getAttributes()->get('room'));
-            foreach ($this->redisClient->smembers('room:' . $roomId . ':members') as $usr) {
+            $topic->broadcast(array('type' => "message", 'usr' => $this->clientManipulator->getClient($connection)->getUsername(), 'msg' => $event['msg']));
 
-                $user1 = $this->clientManipulator->findByUsername($topic, $usr);
-                $poruka = "your cards are:\n 1-" . $this->redisClient->zrange("room:" . $roomId . ":game:" . $usr . ":cards", 0, -1)[0];
-
-                $topic->broadcast(array('type' => "message", 'usr' => $this->clientManipulator->getClient($connection)->getUsername(), 'msg' => $poruka), array(), array($user1['connection']->WAMP->sessionId));
-
-
-            }
-
-
-        }
+        } 
         else if ($event['type']=="start" && $this->redisClient->hget("room:".$roomId, "owner")==$this->clientManipulator->getClient($connection)->getUsername()){
             $this->game->start('room:' . $request->getAttributes()->get('room'));
             $users=$this->redisClient->zrange('room:' . $roomId . ':game:members', 0, -1);
@@ -140,6 +130,59 @@ class AcmeTopic implements TopicInterface
                     $topic->broadcast(['type' => "startst", 'cards'=>$cardarr, 'users'=>$users, 'stindex'=>$ind], [], [$user2['connection']->WAMP->sessionId]);
                 else
                     $topic->broadcast(['type' => "start", 'cards'=>$cardarr, 'users'=>$users, 'stindex'=>$ind], [], [$user2['connection']->WAMP->sessionId]);
+            }
+
+        }
+        else if ($event['type']=="submitSt"){
+            $this->game->submitNarrator("room:".$roomId, $this->clientManipulator->getClient($connection)->getUsername(), $event['sel'], $event['phrase']);
+
+            foreach($this->redisClient->smembers('room:' . $roomId . ':members') as $username){
+                $user2 = $this->clientManipulator->findByUsername($topic, $username);
+                $ind=$this->redisClient->get('room:'.$roomId.':game:st:index');
+
+                if ($username===$this->redisClient->zrange('room:'.$roomId.':game:members', $ind , $ind )[0])
+                    $topic->broadcast(['type' => "choosingst", 'phrase'=>$event['phrase']], [], [$user2['connection']->WAMP->sessionId]);
+                else
+                    $topic->broadcast(['type' => "choosing", 'phrase'=>$event['phrase']], [], [$user2['connection']->WAMP->sessionId]);
+
+            }
+        }
+        else if ($event['type']=="submit"){
+            //$room, $user, $index
+            $retVal=$this->game->submit("room:".$roomId, $this->clientManipulator->getClient($connection)->getUsername(), $event['sel'] );
+            if($retVal==2){
+                foreach($this->redisClient->smembers('room:' . $roomId . ':members') as $username) {
+                    $user2 = $this->clientManipulator->findByUsername($topic, $username);
+                    $ind = $this->redisClient->get('room:' . $roomId . ':game:st:index');
+
+                    $submittedDeck = $this->redisClient->zrange("room:" . $roomId . ":game:shuffledCards", 0, -1);
+                    if ($username === $this->redisClient->zrange('room:' . $roomId . ':game:members', $ind, $ind)[0])
+                        $topic->broadcast(['type' => "watching", 'subCards' => $submittedDeck], [], [$user2['connection']->WAMP->sessionId]);
+                    else
+                        $topic->broadcast(['type' => "voting", 'subCards' => $submittedDeck], [], [$user2['connection']->WAMP->sessionId]);
+                }
+            }else if ($retVal==1){
+                
+            }
+        }
+        else if ($event['type']=="vote"){
+            $temp=$this->game->vote("room:".$roomId, $this->clientManipulator->getClient($connection)->getUsername(), $event['sel']);
+            if($temp['type']==1){
+                //continue
+                foreach($this->redisClient->smembers('room:' . $roomId . ':members') as $username) {
+                    $user2 = $this->clientManipulator->findByUsername($topic, $username);
+                    $ind = $this->redisClient->get('room:' . $roomId . ':game:st:index');
+                    $tInd = $this->redisClient->get('room:'.$roomId.":game:".$username.":missingno");
+                    $tCard = $this->redisClient->zrange('room:'.$roomId.":game:".$username.":cards", $tInd, $tInd);
+
+                    if ($username === $this->redisClient->zrange('room:' . $roomId . ':game:members', $ind, $ind)[0])
+                        $topic->broadcast(['type' => "newrSt", 'votesArr'=>$temp['votesArr'], 'stind'=>$ind, 'voterArr'=>$temp['voterArr'], 'ownerArr'=>$temp['ownerArr'], 'resultArr'=>$temp['resultArr'], 'missingcard'=>$tCard, 'missingind'=>$tInd], [], [$user2['connection']->WAMP->sessionId]);
+                    else
+                        $topic->broadcast(['type' => "newr", 'votesArr'=>$temp['votesArr'], 'stind'=>$ind, 'voterArr'=>$temp['voterArr'], 'ownerArr'=>$temp['ownerArr'], 'resultArr'=>$temp['resultArr'], 'missingcard'=>$tCard, 'missingind'=>$tInd], [], [$user2['connection']->WAMP->sessionId]);
+                }
+            }else if ($temp['type']==2){
+                //end
+
             }
         }
     }
