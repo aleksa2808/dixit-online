@@ -316,6 +316,7 @@
 		canvas.context.rect(this.x, this.y, (this.w), (this.h));
 		else 
 		canvas.context.rect(this.x, (this.y-this.z), (this.wz), (this.hz));
+		canvas.context.closePath();
 		canvas.context.stroke();
 	};	
 	
@@ -1005,6 +1006,7 @@
 					//boja treba da bude boja onog igraca koji je glasao za tu kartu
 					canvas.context.fillStyle = players.player[i].color;
 					canvas.context.fill();
+					canvas.context.closePath();
 					canvas.context.stroke();
 					start+=k;
 				}
