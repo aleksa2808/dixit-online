@@ -196,7 +196,7 @@ class GameLogic
                 }
 
                 $redis->del($room.":game:shuffledCards");
-                if ($maxpoints >=5 || $redis->scard($room.":game:cards")<$redis->scard($room.":members")){
+                if ($maxpoints >=30 || $redis->scard($room.":game:cards")<$redis->scard($room.":members")){
                     //end
                     $points=[];
                     foreach ($members as $mem){
