@@ -47,10 +47,10 @@
 						<tr>
 						<th>#</th>
 						<th>Username</th>
-						<th>Points left to finish</th>
+						<th>Points</th>
 						</tr>
 						</thead>
-						<tbody>
+						<tbody id="resultsTableBody">
 						<tr>
 						<th scope="row">1</th>
 						<td>Horatio</td>
@@ -271,6 +271,17 @@
 						setState(GameState.IDLE);
 						game.loadIdle();
 					}, 5000);
+				}else if (payload.type==="end"){
+					$("#resultsTableBody").empty();
+					var rows="";
+					for(i=0;i<payload.players.length;i++){
+						rows+= "<tr><td>"+i+"</td><td>"+payload.players[i]+"</td><td>"+payload.points[payload.players[i]]+"</td></tr>";
+					}
+
+					$(rows).appendTo("#resultsTable tbody");
+
+					switchResults();
+
 				}
             });
         });

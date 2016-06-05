@@ -182,7 +182,7 @@ class AcmeTopic implements TopicInterface
                 }
             }else if ($temp['type']==2){
                 //end
-
+                $topic->broadcast(['type'=>"end", 'players'=>$temp['mems'], 'points'=>$temp['points']]);
             }
         }
     }

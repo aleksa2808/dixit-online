@@ -26,6 +26,11 @@
 	function setState(st){
 		state=st;
 	}
+	function switchResults(){
+		$("#results").removeClass('hidden');
+		$("#game").addClass('hidden');
+		$("#lobby").addClass('hidden');
+	}
 	
 	window.onresize = function () {
 			switch (state) {

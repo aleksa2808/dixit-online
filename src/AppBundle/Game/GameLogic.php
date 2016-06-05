@@ -21,19 +21,22 @@ class GameLogic
 
 
     public function start($room){
-        if ($this->redisClient->setnx($room.':game:state', "1" )// && $this->redisClient->scard($room.':members')>=4){
-        ){
+        if ($this->redisClient->setnx($room.':game:state', "1" ) && $this->redisClient->scard($room.':members')>=4){
+
+            $this->redisClient->sadd($room.":gamedel", $room.':game:state');
             //init card deck
             for ($i=1; $i<=107; $i++)
                 $this->redisClient->sadd($room.':game:cards',array($i));
 
-
+            $this->redisClient->sadd($room.":gamedel", $room.":game:cards");
             // st = storyteller
 
             // picking random storyteller
             $this->redisClient->set($room.":game:st:index", rand(0, $this->redisClient->scard($room.':members')-1));
             $this->redisClient->set($room.":game:st:card", 0);
             $this->redisClient->set($room.":game:st:phrase", "n/a");
+
+            $this->redisClient->sadd($room.":gamedel", [$room.":game:st:index", $room.":game:st:card", $room.":game:st:phrase"]);
 
             $num=0;
             foreach ($this->redisClient->smembers($room.':members') as $mem){
@@ -45,12 +48,27 @@ class GameLogic
                 $this->redisClient->set($room.':game:'.$mem.':missingno', 0);
 
 
+
                 for ($j=1; $j<=6;$j++){
                     $crd = $this->redisClient->spop($room.':game:cards');
                     $this->redisClient->zadd($room.':game:'.$mem.':cards', array ($crd=>$j));
                 }
+                $this->redisClient->sadd($room.":gamedel",
+                    [   $room.':game:'.$mem.':points',
+                        $room.':game:'.$mem.':voted',
+                        $room.':game:'.$mem.':submitted',
+                        $room.':game:'.$mem.':missingno',
+                        $room.':game:'.$mem.':cards'
+                    ]);
 
             }
+            $this->redisClient->sadd($room.":gamedel",
+                [   $room.":game:members",
+                    $room.":game:submitset",
+                    $room.":game:cardVotes",
+                    $room.":game:shuffledCards",
+                    $room.":game:votes"
+                ]);
             return true;
         }else return false;
     }
@@ -178,10 +196,18 @@ class GameLogic
                 }
 
                 $redis->del($room.":game:shuffledCards");
-                if ($maxpoints >=30 || $redis->scard($room.":game:cards")<$redis->scard($room.":members")){
+                if ($maxpoints >=5 || $redis->scard($room.":game:cards")<$redis->scard($room.":members")){
                     //end
+                    $points=[];
+                    foreach ($members as $mem){
+                        $points[$mem]=$redis->get($room.":game:".$mem.":points");
+                    }
+                    $delarray=$redis->smembers($room.":gamedel");
+                    foreach ($delarray as $t) $redis->del($t);
+                    $redis->del($room.":gamedel");
 
-                    return ['type'=>2];
+
+                    return ['type'=>2, 'mems'=>$members, 'points'=>$points];
                 }else {
                     $redis->set($room . ":game:state", 1);
 
@@ -193,7 +219,6 @@ class GameLogic
                     }
 
                     $curSt=$redis->get($room.":game:st:index");
-                    $redis->set($room.":game:st:oldindex", $curSt);
                     $curSt= ((int)$curSt+1)%count($members);
                     $redis->set($room.":game:st:index", $curSt);
 
