@@ -7,7 +7,6 @@ use Predis\ClientInterface;
 
 class GameLogic
 {
-    protected $stri;
     protected $redisClient;
 
     /**
@@ -16,7 +15,6 @@ class GameLogic
     public function __construct(ClientInterface $redis)
     {
         $this->redisClient = $redis;
-        $this->stri = "hehe";
     }
 
 
