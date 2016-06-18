@@ -27,14 +27,6 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/entry", name="entry")
-     */
-    public function entryAction(Request $request)
-    {
-        return $this->render('default/entry.html.twig');
-    }
-
-    /**
      * @Route("/lobby/{roomId}", name="lobby", requirements={
      *     "roomId": "\d+"
      * })
