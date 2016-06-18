@@ -93,7 +93,7 @@ class AcmeTopic implements TopicInterface
                     $this->redisClient->del('room:' . $roomId . ':members');
                     $this->redisClient->del('room:' . $roomId . ':lmembers');
                 } else {
-                    $this->redisClient->hset('room:'.$roomId, 'owner', $this->redisClient->srandmember('room:'.$roomId.':members'));
+                    if ($this->redisClient->hget('room:'.$roomId, 'owner') === $user) $this->redisClient->hset('room:'.$roomId, 'owner', $this->redisClient->srandmember('room:'.$roomId.':members'));
                     $topic->broadcast(['type'=>'entexit' ,'msg' => $user . " has left " . $this->redisClient->hget('room:' . $roomId, 'name')]);
                     $topic->broadcast(array('type' => "members", 'members' => $this->redisClient->smembers('room:' . $roomId . ':members')));
                 }
