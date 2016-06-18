@@ -9,6 +9,7 @@ use Ratchet\ConnectionInterface;
 use Gos\Bundle\WebSocketBundle\Client\ClientManipulatorInterface;
 use Ratchet\Wamp\Topic;
 use Gos\Bundle\WebSocketBundle\Router\WampRequest;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class AcmeTopic implements TopicInterface
 {
@@ -37,7 +38,13 @@ class AcmeTopic implements TopicInterface
     public function onSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         $roomId = $request->getAttributes()->get('room');
-        $user = $this->clientManipulator->getClient($connection)->getUsername();
+        $user = $this->clientManipulator->getClient($connection);
+        if ($user instanceof UserInterface) {
+            $user = $user->getUsername();
+        } else {
+            $connection->close();
+            return;
+        }
 
         if ($this->redisClient->zscore('rooms', $roomId)) {
             if (!$this->redisClient->sismember('room:'.$roomId.':members', $user)) {
@@ -69,7 +76,13 @@ class AcmeTopic implements TopicInterface
     public function onUnSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         $roomId = $request->getAttributes()->get('room');
-        $user = $this->clientManipulator->getClient($connection)->getUsername();
+        $user = $this->clientManipulator->getClient($connection);
+        if ($user instanceof UserInterface) {
+            $user = $user->getUsername();
+        } else {
+            $connection->close();
+            return;
+        }
 
         $userConnections = 0;
         foreach ($topic as $client) {
