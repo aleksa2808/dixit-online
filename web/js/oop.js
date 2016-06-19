@@ -23,6 +23,7 @@
 		
 	};**/
 	
+	
 	function setState(st){
 		state=st;
 	}
@@ -523,7 +524,7 @@
 	
 	Players.prototype.setStoryteller = function (n) {
 		for (i=0; i<this.num; i++) {
-			if (i == n-1) this.player[i].isStoryteller();
+			if (i == n) this.player[i].isStoryteller();
 			else this.player[i].notStoryteller();
 		}
 	};
