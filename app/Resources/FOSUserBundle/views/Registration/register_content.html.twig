@@ -5,22 +5,22 @@
 {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
     <div>
 	<div class="row bot">
-		<div class="form-group col-sm-12">
+		<div class="form-group col-sm-12  col-xs-12  col-md-12  col-lg-12">
 			{{ form_widget(form.username, {'attr': {'class': "form-control", 'placeholder': "username"}}) }}
 		</div>
 	</div>
 	<div class="row bot">
-		<div class="form-group col-sm-12">
+		<div class="form-group col-sm-12  col-xs-12  col-md-12  col-lg-12">
 			{{ form_widget(form.email, {'attr': {'class': "form-control", 'placeholder': "email"}}) }}
 		</div>
 	</div>
 	<div class="row bot">
-		<div class="form-group col-sm-12">
+		<div class="form-group col-sm-12  col-xs-12  col-md-12  col-lg-12">
 			{{ form_widget(form.plainPassword.first, {'attr': {'class': "form-control", 'placeholder': "password"}}) }}
 		</div>
 	</div>
 	<div class="row bot">
-		<div class="form-group col-sm-12">
+		<div class="form-group col-sm-12  col-xs-12  col-md-12  col-lg-12">
 			{{ form_widget(form.plainPassword.second, {'attr': {'class': "form-control", 'placeholder': "repeat password"}}) }}
 		</div>
 	</div>
@@ -28,7 +28,7 @@
 		{{ form_errors(form) }}	
 	</div>
 	<div class="row bot">
-		<div class=" col-sm-12">
+		<div class=" col-sm-12  col-xs-12  col-md-12  col-lg-12">
 			<button class="btn btn-primary" type="submit">{{ 'registration.submit'|trans({}, 'FOSUserBundle') }}</button>
 			<a class="btn btn-default" href="/login">Cancel</a>
 		</div>

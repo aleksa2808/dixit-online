@@ -3,17 +3,17 @@
 {{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
     <div>
 	 <div class="row bot">
-		<div class="form-group col-sm-12">
-			{{ form_widget(form.username, {'attr': {'class': "form-control", 'placeholder': "new username"}}) }}
+		<div class="form-group col-sm-12 col-sx-12 col-md-12 col-lg-12">
+			{{ form_widget(form.username, {'attr': {'class': "form-control", 'placeholder': "new username", 'readonly':"readonly"}}) }}
 		</div>
 	 </div>
 	 <div class="row bot">
-		<div class="form-group col-sm-12">
+		<div class="form-group col-sm-12 col-sx-12 col-md-12 col-lg-12">
 			{{ form_widget(form.email, {'attr': {'class': "form-control", 'placeholder': "new email" }}) }}
 		</div>
 	 </div>
 	 <div class="row bot">
-		<div class="form-group col-sm-12">
+		<div class="form-group col-sm-12 col-sx-12 col-md-12 col-lg-12">
 			{{ form_widget(form.current_password, {'attr': {'class': "form-control", 'placeholder': "current password" }}) }}
 		</div>
 	 </div>
@@ -21,7 +21,7 @@
 			{{ form_errors(form) }}	
 	 </div>
 	 <div class="row bot">
-		<div class="form-group col-sm-12">
+		<div class="form-group col-sm-12 col-sx-12 col-md-12 col-lg-12">
 			<button class="btn btn-primary" type="submit">{{ 'profile.edit.submit'|trans({}, 'FOSUserBundle') }}</button>
 			<a class="btn btn-default" href="/profile">Cancel</a>
 		</div>
