@@ -135,7 +135,7 @@ class DefaultController extends Controller
                 $roomInfo = $responses[0];
                 $numMembers = $responses[1];
 
-                if ($roomInfo && false !== $numMembers)
+                if ($numMembers !== $roomInfo['maxMembers'])
                 {
                     $roomTableRow = array(
                         'id' => $roomId,
