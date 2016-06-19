@@ -132,7 +132,10 @@ class AcmeTopic implements TopicInterface
             $topic->broadcast(array('type' => "message", 'usr' => $this->clientManipulator->getClient($connection)->getUsername(), 'msg' => $event['msg']));
 
         } 
-        else if ($event['type']=="start" && $this->redisClient->hget("room:".$roomId, "owner")==$this->clientManipulator->getClient($connection)->getUsername()){
+        else if (	$event['type']=="start" 
+					&& $this->redisClient->hget("room:".$roomId, "owner")==$this->clientManipulator->getClient($connection)->getUsername()
+					&& $this->redisClient->scard("room:".$roomId.":members")>=4){
+						
             $this->game->start('room:' . $request->getAttributes()->get('room'));
             $users=$this->redisClient->zrange('room:' . $roomId . ':game:members', 0, -1);
             foreach ($this->redisClient->smembers('room:' . $roomId . ':members') as $username) {
