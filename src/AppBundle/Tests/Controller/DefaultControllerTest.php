@@ -71,4 +71,21 @@ class DefaultControllerTest extends WebTestCase
 
         $this->assertTrue($crawler->filter('html:contains("Available games")')->count() === 1);
     }
+
+    public function testAdmin() {
+
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/login');
+
+        $form = $crawler->selectButton('_submit')->form(array(
+            '_username'  => 'aleksa2808',
+            '_password'  => 'lepass',
+        ));
+
+        $client->submit($form);
+        $client->followRedirect();
+
+        $crawler = $client->request('GET', '/admin/');
+        $this->assertTrue($crawler->filter('html:contains("User")')->count() === 1);
+    }
 }
