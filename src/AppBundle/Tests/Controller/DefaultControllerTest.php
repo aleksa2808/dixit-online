@@ -17,8 +17,9 @@ class DefaultControllerTest extends WebTestCase
         $this->assertTrue($crawler->filter('html:contains("Welcome to DiXit!")')->count() === 1);
     }
     
-    public function testLogin()
-    {
+    public function testCreateGameWithoutAjax() {}
+    
+    public function testCreateGame() {
 
     }
 }
