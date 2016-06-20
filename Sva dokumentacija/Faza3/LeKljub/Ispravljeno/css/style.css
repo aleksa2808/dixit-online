@@ -1,0 +1,21 @@
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background: #000 url(../img/back.jpg);
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+.container-fluid {
+	color:#DEAB64;
+}
+
+.table {
+	opacity:0.55;
+}
+
+.table > .table-hover {
+	opacity:0.55;
+}
