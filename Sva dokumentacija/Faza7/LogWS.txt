@@ -1,0 +1,4 @@
+//ConfigurationTest.php
+
+Time: 834ms	Memory: 6.25MB
+OK (2 tests, 3 assertions)
