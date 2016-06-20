@@ -1,0 +1,111 @@
+****FORM****
+
+//ChangePasswordFormTypeTest.php
+
+Time: 932ms	Memory: 9.00MB
+
+OK(1 test, 3 assertions)
+
+
+
+//ProfileFormTypeTest.php
+
+Time: 892ms	Memory: 9.00MB
+
+OK(1 test, 4 assertions)
+
+
+
+//RegistrationFormTypeTest.php
+
+Time:894ms	Memory: 9.00MB
+
+OK(1 test, 5 assertions)
+
+
+****DOCTRINE****
+
+
+//UserManagerTest.php
+
+Time: 803ms	Memory: 6.25MB
+
+OK(5 tests, 5 assertions)
+
+
+
+****COMMAND****
+
+//CreateUserCommandTest.php
+
+Time: 843ms	Memory: 7.50MB
+
+OK(3 tests, 14 assertions)
+
+
+
+//ChangePasswordCommandTest.php
+
+Time: 805ms	Memory: 7.50MB
+
+OK(3 tests, 14 assertions)
+
+
+****EVENT LISTENER****
+
+//AuthenticationListenerTest.php
+
+Time: 915ms	Memory: 7.25MB
+
+OK(2 tests, 4 assertions)
+
+
+****MODEL****
+
+//UserManagerTest.php
+
+Time: 759ms	Memory: 6.00MB
+
+OK(8 tests, 20 assertions)
+
+
+
+//UserTest.php
+
+Time: 730ms	Memory: 5.50MB
+
+OK(6 tests, 14 assertions)
+
+
+
+****PROPEL****
+
+//UserTest.php
+
+Time: 689ms	Memory: 5.00MB
+
+OK(1 test, 0 assertions, skipped 1)
+incomplete, risky
+
+
+****SECURITY****
+
+//LoginManagerTest.php
+
+Time: 978ms	Memory: 7.75MB
+
+OK(4 tests, 22 assertions)
+
+
+//EmailUserProviderTest.php
+
+Time: 791ms	Memory: 6.25MB
+
+OK(4 tests, 8 assertions)
+
+
+//UserProviderTest.php
+
+Time: 918ms	Memory: 7.00MB
+
+OK(6 tests, 12 assertions)
